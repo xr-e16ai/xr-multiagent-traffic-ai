@@ -3,55 +3,313 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Multi-Agent Traffic Simulation</title>
+  <title>Login - AI Traffic Simulation</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Premium Login Specific Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top right, #0d1b2a, #000000);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Animated background elements */
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: 0;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+    .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(0, 150, 255, 0.15); }
+    .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: rgba(0, 255, 200, 0.1); }
+    
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .header-content {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .ai-icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulseIcon 3s infinite ease-in-out;
+    }
+
+    @keyframes pulseIcon {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: #8892b0;
+      font-size: 0.9rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #a8b2d1;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #4facfe;
+      box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .prefix {
+      padding: 12px 0 12px 15px;
+      color: #8892b0;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      margin-right: 10px;
+      padding-right: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    
+    .input-wrapper:not(.has-prefix) input {
+      padding-left: 15px;
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+    }
+
+    .primary-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .primary-btn:disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: #666;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 1s ease-in-out infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .primary-btn.loading {
+      color: transparent;
+    }
+    .primary-btn.loading .spinner {
+      display: block;
+    }
+
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .error-msg {
+      color: #ff4d4f;
+      font-size: 0.85rem;
+      margin-top: 15px;
+      text-align: center;
+      min-height: 20px;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.3s ease;
+    }
+    .error-msg.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .success-msg {
+      color: #52c41a;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* reCAPTCHA wrapper styling to blend with dark mode */
+    #recaptcha-container {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
-  <div id="setup-overlay">
-    <div class="glass-card" style="width: 350px;">
-      <h1>Login</h1>
-      <p style="color:#aaa;margin:-12px 0 18px;font-size:0.88em">Welcome back! Login via SMS OTP</p>
+  
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
 
-      <div class="option-group">
-        <label>Email</label>
-        <input type="email" id="login-email" placeholder="john@example.com" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+  <div class="login-container">
+    <div class="glass-card">
+      <div class="header-content">
+        <div class="ai-icon">⬡</div>
+        <h1>AI Powered Multi-Agent Traffic Simulation</h1>
+        <p class="subtitle">Secure Access using Mobile OTP Verification</p>
       </div>
 
-      <div class="option-group">
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="********" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
-      </div>
-
-      <div style="display: flex; gap: 10px; margin-bottom: 10px; margin-top: 15px;">
-        <button id="login-email-btn" style="flex: 1; background: #4caf50;">Login with Email</button>
-      </div>
-
-      <p style="text-align: center; margin: 10px 0; font-size: 0.9em; color: #aaa;">OR</p>
-
-      <div class="option-group">
-        <label>Phone Number (with country code)</label>
-        <input type="tel" id="login-phone" placeholder="+1234567890" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
-      </div>
-
-      <div id="recaptcha-container" style="margin-bottom: 10px;"></div>
-
-      <button id="send-otp-btn" style="width: 100%; margin-bottom: 10px;">Login with Phone OTP</button>
-
-      <div id="otp-section" style="display:none;">
-        <div class="option-group">
-          <label>Enter OTP</label>
-          <input type="text" id="login-otp" placeholder="123456" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+      <!-- Step 1: Phone Entry -->
+      <div id="step-1">
+        <div class="input-group">
+          <label>Full Name</label>
+          <div class="input-wrapper">
+            <input type="text" id="login-name" placeholder="Enter your Full Name" autocomplete="name" />
+          </div>
         </div>
-        <button id="verify-otp-btn" style="width: 100%; background: #4caf50;">Verify & Login</button>
+
+        <div class="input-group">
+          <label>Mobile Number</label>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix">+91</span>
+            <input type="tel" id="login-phone" placeholder="Enter Mobile Number" maxlength="10" autocomplete="tel-national" />
+          </div>
+        </div>
+
+        <div id="recaptcha-container"></div>
+        <button id="send-otp-btn" class="primary-btn" disabled>
+          <span>Send OTP</span>
+          <div class="spinner"></div>
+        </button>
       </div>
 
-      <p style="margin-top: 15px; font-size: 0.9em; text-align: center;">
-        Don't have an account? <a href="/register.html" style="color: #4da8da;">Register</a>
-      </p>
+      <!-- Step 2: OTP Verification -->
+      <div id="step-2" style="display: none;">
+        <div class="input-group">
+          <label>OTP Verification</label>
+          <div class="input-wrapper">
+            <input type="text" id="login-otp" placeholder="Enter 6 Digit OTP" maxlength="6" autocomplete="one-time-code" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem; font-weight: 600;" />
+          </div>
+        </div>
+        <button id="verify-otp-btn" class="primary-btn" disabled>
+          <span>Verify OTP</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
 
-      <p id="login-msg" style="color: red; text-align: center; margin-top: 10px; font-size: 0.9em;"></p>
+      <!-- Success State -->
+      <div id="step-success" class="success-msg">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Mobile Verified Successfully
+      </div>
+
+      <div id="login-msg" class="error-msg"></div>
     </div>
   </div>
+
   <script type="module" src="/src/login.js"></script>
 </body>
 </html>

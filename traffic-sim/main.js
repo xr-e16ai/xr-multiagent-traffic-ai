@@ -299,7 +299,7 @@ onAuthStateChanged(auth, async (user) => {
         try {
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
-            if (docSnap.exists() && docSnap.data().simulationAccess === true) {
+            if (docSnap.exists() && docSnap.data().isApproved === true) {
                 if (!window.simApp) {
                     new App();
                 }

@@ -3,29 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - Multi-Agent Traffic Simulation</title>
+  <title>Dashboard - AI Traffic Simulation</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Base Dashboard Styles leveraging the dark theme */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d1b2a;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .dashboard-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .illustration {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: floatIcon 4s ease-in-out infinite;
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff, #a8b2d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .message {
+      color: #8892b0;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #a8b2d1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 77, 79, 0.1);
+      color: #ff4d4f;
+      border-color: rgba(255, 77, 79, 0.3);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    
+    .status-pending {
+      background: rgba(255, 152, 0, 0.1);
+      color: #ff9800;
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .status-approved {
+      background: rgba(76, 175, 80, 0.1);
+      color: #4caf50;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+  </style>
 </head>
 <body>
-  <div id="setup-overlay">
-    <div class="glass-card" style="width: 400px;">
-      <h1 id="welcome-text">Loading...</h1>
-      <p style="color:#aaa;margin:-12px 0 18px;font-size:0.88em">Your Dashboard</p>
 
-      <div style="text-align: left; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-        <p><strong>Phone Verification:</strong> <span id="status-phone">Loading...</span></p>
-        <p><strong>Payment Status:</strong> <span id="status-payment">Loading...</span></p>
-        <p><strong>Simulation Access:</strong> <span id="status-simulation">Loading...</span></p>
+  <div class="dashboard-container">
+    <div class="glass-card" id="dashboard-content">
+      <div id="loading-state">
+        <div class="illustration">🔄</div>
+        <h1>Loading Profile...</h1>
       </div>
 
-      <p id="lock-message" style="color: #ff9800; font-size: 0.9em; margin-bottom: 15px; display: none;">
-        Simulation is currently locked. Please complete payment. Administrator approval is required.
-      </p>
+      <div id="pending-state" style="display: none;">
+        <div class="illustration">⏳</div>
+        <div class="status-badge status-pending">Access Pending</div>
+        <h1>Account Under Review</h1>
+        <div class="message">
+          <p>Your account has been created successfully.</p>
+          <p>Your account is currently awaiting administrator approval. You will receive access once the administrator activates your account.</p>
+          <p>Please contact the administrator if you have already completed the payment.</p>
+        </div>
+      </div>
 
-      <button id="start-simulation-btn" style="width: 100%; margin-bottom: 10px;" disabled>Start Simulation</button>
-      <button id="logout-btn" style="width: 100%; background: #d32f2f;">Logout</button>
+      <div id="approved-state" style="display: none;">
+        <div class="illustration">✅</div>
+        <div class="status-badge status-approved">Approved</div>
+        <h1 id="welcome-text">Welcome</h1>
+        <div class="message">
+          <p>Your account is fully activated. You have full access to the Multi-Agent Traffic Simulation environment.</p>
+        </div>
+        <button id="start-simulation-btn" class="primary-btn">Start Simulation</button>
+      </div>
+
+      <button id="logout-btn" class="logout-btn" style="display: none; margin-top: 20px;">Sign Out</button>
     </div>
   </div>
+
   <script type="module" src="/src/dashboard.js"></script>
 </body>
 </html>

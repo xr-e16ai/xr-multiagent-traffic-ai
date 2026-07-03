@@ -3,11 +3,11 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const loadingState = document.getElementById("loading-state");
+  const pendingState = document.getElementById("pending-state");
+  const approvedState = document.getElementById("approved-state");
   const welcomeText = document.getElementById("welcome-text");
-  const statusPhone = document.getElementById("status-phone");
-  const statusPayment = document.getElementById("status-payment");
-  const statusSimulation = document.getElementById("status-simulation");
-  const lockMessage = document.getElementById("lock-message");
+  
   const startSimulationBtn = document.getElementById("start-simulation-btn");
   const logoutBtn = document.getElementById("logout-btn");
 
@@ -17,43 +17,45 @@ document.addEventListener("DOMContentLoaded", () => {
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
+        loadingState.style.display = "none";
+        logoutBtn.style.display = "block";
+
         if (docSnap.exists()) {
           const userData = docSnap.data();
           
-          welcomeText.innerText = `Welcome, ${userData.name || 'User'}`;
-          statusPhone.innerText = userData.otpVerified ? "✅ Verified" : "❌ Pending";
-          statusPayment.innerText = userData.paymentStatus ? "✅ Paid" : "❌ Pending";
-          statusSimulation.innerText = userData.simulationAccess ? "✅ Approved" : "❌ Locked";
-
-          if (userData.simulationAccess) {
-            startSimulationBtn.disabled = false;
-            startSimulationBtn.style.background = "#4caf50";
-            lockMessage.style.display = "none";
+          if (userData.isApproved === true) {
+            welcomeText.innerText = `Welcome, ${userData.fullName || 'User'}`;
+            approvedState.style.display = "block";
+            pendingState.style.display = "none";
           } else {
-            startSimulationBtn.disabled = true;
-            startSimulationBtn.style.background = "#555";
-            startSimulationBtn.style.cursor = "not-allowed";
-            lockMessage.style.display = "block";
+            approvedState.style.display = "none";
+            pendingState.style.display = "block";
           }
         } else {
-          welcomeText.innerText = "Welcome, User";
-          lockMessage.style.display = "block";
-          lockMessage.innerText = "User profile not found. Please register properly.";
+          // Document missing - treat as pending/error
+          pendingState.style.display = "block";
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        loadingState.style.display = "none";
+        pendingState.style.display = "block";
+        logoutBtn.style.display = "block";
       }
     } else {
       window.location.href = "/login.html";
     }
   });
 
-  startSimulationBtn.addEventListener("click", () => {
-    window.location.href = "/";
-  });
+  if (startSimulationBtn) {
+    startSimulationBtn.addEventListener("click", () => {
+      window.location.href = "/";
+    });
+  }
 
-  logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "/login.html";
-  });
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "/login.html";
+    });
+  }
 });
