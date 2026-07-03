@@ -3,6 +3,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Simulation } from './src/simulation.js';
 import { GEMINI_API_KEY } from './api_key.js';
+import { auth, db } from './src/firebase-config.js';
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 class App {
     constructor() {
@@ -291,4 +294,23 @@ class App {
     }
 }
 
-new App();
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists() && docSnap.data().simulationAccess === true) {
+                if (!window.simApp) {
+                    new App();
+                }
+            } else {
+                window.location.href = '/dashboard.html';
+            }
+        } catch(e) {
+            console.error("Auth check failed:", e);
+            window.location.href = '/login.html';
+        }
+    } else {
+        window.location.href = '/login.html';
+    }
+});

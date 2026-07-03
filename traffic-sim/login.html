@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Multi-Agent Traffic Simulation</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="setup-overlay">
+    <div class="glass-card" style="width: 350px;">
+      <h1>Login</h1>
+      <p style="color:#aaa;margin:-12px 0 18px;font-size:0.88em">Welcome back! Login via SMS OTP</p>
+
+      <div class="option-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="john@example.com" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+      </div>
+
+      <div class="option-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="********" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 10px; margin-top: 15px;">
+        <button id="login-email-btn" style="flex: 1; background: #4caf50;">Login with Email</button>
+      </div>
+
+      <p style="text-align: center; margin: 10px 0; font-size: 0.9em; color: #aaa;">OR</p>
+
+      <div class="option-group">
+        <label>Phone Number (with country code)</label>
+        <input type="tel" id="login-phone" placeholder="+1234567890" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+      </div>
+
+      <div id="recaptcha-container" style="margin-bottom: 10px;"></div>
+
+      <button id="send-otp-btn" style="width: 100%; margin-bottom: 10px;">Login with Phone OTP</button>
+
+      <div id="otp-section" style="display:none;">
+        <div class="option-group">
+          <label>Enter OTP</label>
+          <input type="text" id="login-otp" placeholder="123456" style="width:100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; background: rgba(255,255,255,0.1); color: white;" />
+        </div>
+        <button id="verify-otp-btn" style="width: 100%; background: #4caf50;">Verify & Login</button>
+      </div>
+
+      <p style="margin-top: 15px; font-size: 0.9em; text-align: center;">
+        Don't have an account? <a href="/register.html" style="color: #4da8da;">Register</a>
+      </p>
+
+      <p id="login-msg" style="color: red; text-align: center; margin-top: 10px; font-size: 0.9em;"></p>
+    </div>
+  </div>
+  <script type="module" src="/src/login.js"></script>
+</body>
+</html>

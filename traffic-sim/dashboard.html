@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Multi-Agent Traffic Simulation</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="setup-overlay">
+    <div class="glass-card" style="width: 400px;">
+      <h1 id="welcome-text">Loading...</h1>
+      <p style="color:#aaa;margin:-12px 0 18px;font-size:0.88em">Your Dashboard</p>
+
+      <div style="text-align: left; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+        <p><strong>Phone Verification:</strong> <span id="status-phone">Loading...</span></p>
+        <p><strong>Payment Status:</strong> <span id="status-payment">Loading...</span></p>
+        <p><strong>Simulation Access:</strong> <span id="status-simulation">Loading...</span></p>
+      </div>
+
+      <p id="lock-message" style="color: #ff9800; font-size: 0.9em; margin-bottom: 15px; display: none;">
+        Simulation is currently locked. Please complete payment. Administrator approval is required.
+      </p>
+
+      <button id="start-simulation-btn" style="width: 100%; margin-bottom: 10px;" disabled>Start Simulation</button>
+      <button id="logout-btn" style="width: 100%; background: #d32f2f;">Logout</button>
+    </div>
+  </div>
+  <script type="module" src="/src/dashboard.js"></script>
+</body>
+</html>
