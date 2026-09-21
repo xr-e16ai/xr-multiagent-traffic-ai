@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Settings - Enterprise Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+  <style>
+    /* Premium Modern Toggles */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #94a3b8;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #3b82f6;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #3b82f6;
+    }
+
+    /* Grid Layout for Settings */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 1024px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Form Styles */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+    .setting-label-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: 12px;
+    }
+    .setting-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #fff;
+    }
+    .setting-desc {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+    .setting-value {
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* Input edits styles */
+    .setting-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.88rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .setting-input:focus {
+      border-color: #3b82f6;
+    }
+    .edit-mode .setting-display {
+      display: none;
+    }
+    .setting-edit-container {
+      display: none;
+      width: 70%;
+    }
+    .edit-mode .setting-edit-container {
+      display: block;
+    }
+
+    /* Indicators */
+    .status-indicator-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .status-indicator-row:last-child {
+      border-bottom: none;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .status-dot-active {
+      width: 6px;
+      height: 6px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+  </style>
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link active">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title">System Settings</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search settings, parameters, logs...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">
+            🔔 <span class="badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+        
+        <div class="page-header flex-between fade-in">
+          <div>
+            <h2 class="section-title" style="margin: 0; font-size: 1.5rem;">System Administration</h2>
+            <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 0.95rem;">Manage global platform settings and administrator preferences.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid" style="margin-top: 24px;">
+          
+          <!-- LEFT COLUMN -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- SECTION 1: COMPANY INFORMATION -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                  <h3 class="section-title" style="margin: 0;">🏢 Company Information</h3>
+                  <div>
+                    <button class="action-btn glass-panel" id="company-edit-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px;">Edit</button>
+                    <button class="action-btn glass-panel primary-action" id="company-save-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: none;">Save</button>
+                  </div>
+                </div>
+                
+                <div id="company-section-body" style="display: flex; flex-direction: column; gap: 4px;">
+                  <div style="display: flex; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; font-weight: bold;">
+                      E16
+                    </div>
+                    <div>
+                      <h4 style="margin: 0; color: #fff; font-size: 1.05rem;">E16 AI Logo</h4>
+                      <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8;">Primary Platform Branding</p>
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Company Name</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-name-val">E16 AI XR Technology Pvt Ltd</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="comp-name-input" value="E16 AI XR Technology Pvt Ltd">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Product Name</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-prod-val">AI Multi-Agent Traffic Simulation Platform</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="comp-prod-input" value="AI Multi-Agent Traffic Simulation Platform">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Support Phone</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-phone-val">+91 9840034916</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="comp-phone-input" value="+91 9840034916">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Support Email</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-email-val">info@e16ai.com</span>
+                    <div class="setting-edit-container">
+                      <input type="email" class="setting-input" id="comp-email-input" value="info@e16ai.com">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Website</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-web-val">https://www.e16ai.com</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="comp-web-input" value="https://www.e16ai.com">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Company Address</span>
+                    </div>
+                    <span class="setting-value setting-display" id="comp-addr-val">E16 AI Headquarters, Bangalore, India</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="comp-addr-input" value="E16 AI Headquarters, Bangalore, India">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 2: ADMINISTRATOR PROFILE -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                  <h3 class="section-title" style="margin: 0;">👤 Administrator Profile</h3>
+                  <div>
+                    <button class="action-btn glass-panel" id="profile-edit-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px;">Edit Profile</button>
+                    <button class="action-btn glass-panel primary-action" id="profile-save-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: none;">Save</button>
+                    <button class="action-btn glass-panel" id="password-change-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px;">Change Password</button>
+                  </div>
+                </div>
+
+                <div id="profile-section-body" style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Administrator Name</span>
+                    </div>
+                    <span class="setting-value setting-display" id="admin-name-val">Administrator</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="admin-name-input" value="Administrator">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Administrator ID</span>
+                    </div>
+                    <span class="setting-value">E16-ADMIN-01</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Email</span>
+                    </div>
+                    <span class="setting-value setting-display" id="admin-email-val">admin@e16.ai</span>
+                    <div class="setting-edit-container">
+                      <input type="email" class="setting-input" id="admin-email-input" value="admin@e16.ai">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Phone</span>
+                    </div>
+                    <span class="setting-value setting-display" id="admin-phone-val">+91 9840034916</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="admin-phone-input" value="+91 9840034916">
+                    </div>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Role</span>
+                    </div>
+                    <span class="setting-value" style="color: #3b82f6;">Super Admin</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Last Login</span>
+                    </div>
+                    <span class="setting-value" id="admin-last-login">2026-07-15 09:15:22 AM</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 3: PLATFORM INFORMATION -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">💻 Platform Information</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Platform Version</span>
+                    </div>
+                    <span class="setting-value">v2.2.0-Enterprise</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Build Version</span>
+                    </div>
+                    <span class="setting-value">2.2.0.849</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Release Date</span>
+                    </div>
+                    <span class="setting-value">2026-07-10</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Environment</span>
+                    </div>
+                    <span class="setting-value" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">Production</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Firebase Project ID</span>
+                    </div>
+                    <span class="setting-value" style="font-family: monospace;">trafficsim-e16ai</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Database</span>
+                    </div>
+                    <span class="setting-value">Cloud Firestore</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Hosting</span>
+                    </div>
+                    <span class="setting-value">Firebase Hosting</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Authentication</span>
+                    </div>
+                    <span class="setting-value">Firebase Authentication</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- SECTION 4: SIMULATION SETTINGS -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">🚦 Simulation Settings</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Simulation Access</span>
+                      <span class="setting-desc">Allow authorized users to spawn agents and run models</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="sim-access-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Maintenance Mode</span>
+                      <span class="setting-desc">Restrict platform access to system administrators only</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="maintenance-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">New Registration</span>
+                      <span class="setting-desc">Enable public and corporate user registration portal</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="registration-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">User Approval Required</span>
+                      <span class="setting-desc">Require administrators to review and approve new accounts</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="approval-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 5: NOTIFICATION SETTINGS -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">🔔 Notification Settings</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Email Notifications</span>
+                      <span class="setting-desc">Send billing, activation, and report digests via email</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="email-notif-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">System Alerts</span>
+                      <span class="setting-desc">Display operational dashboard warnings and messages</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="system-alerts-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Administrator Alerts</span>
+                      <span class="setting-desc">Notify Super Admins of high latency or resource spike</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="admin-alerts-toggle">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 6: SECURITY SETTINGS -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">🛡️ Security Settings</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Session Timeout</span>
+                      <span class="setting-desc">Automatic idle user session logout limit</span>
+                    </div>
+                    <span class="setting-value">60 minutes</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Password Policy</span>
+                      <span class="setting-desc">Minimum character safety requirements</span>
+                    </div>
+                    <span class="setting-value" style="font-size: 0.8rem;">Min 8 chars, 1 uppercase, 1 symbol</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Last Backup</span>
+                      <span class="setting-desc">Scheduled Firestore database snapshot backup</span>
+                    </div>
+                    <span class="setting-value">Daily at 02:00 AM UTC</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Login Attempts</span>
+                      <span class="setting-desc">Limit before account temporary suspension</span>
+                    </div>
+                    <span class="setting-value">5 attempts max</span>
+                  </div>
+
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Account Lockout</span>
+                      <span class="setting-desc">Lockout duration after exceeded attempts</span>
+                    </div>
+                    <span class="setting-value">15 minutes lock</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 7: SYSTEM HEALTH -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">💚 System Health</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="status-indicator-row">
+                    <span style="font-size: 0.9rem; color: #fff;">Firebase Authentication</span>
+                    <div class="status-pill">
+                      <span class="status-dot-active"></span>
+                      <span>Online</span>
+                    </div>
+                  </div>
+
+                  <div class="status-indicator-row">
+                    <span style="font-size: 0.9rem; color: #fff;">Firestore Database</span>
+                    <div class="status-pill">
+                      <span class="status-dot-active"></span>
+                      <span>Online</span>
+                    </div>
+                  </div>
+
+                  <div class="status-indicator-row">
+                    <span style="font-size: 0.9rem; color: #fff;">Firebase Hosting</span>
+                    <div class="status-pill">
+                      <span class="status-dot-active"></span>
+                      <span>Online</span>
+                    </div>
+                  </div>
+
+                  <div class="status-indicator-row">
+                    <span style="font-size: 0.9rem; color: #fff;">Cloud Storage</span>
+                    <div class="status-pill">
+                      <span class="status-dot-active"></span>
+                      <span>Online</span>
+                    </div>
+                  </div>
+
+                  <div class="status-indicator-row">
+                    <span style="font-size: 0.9rem; color: #fff;">Platform Analytics API</span>
+                    <div class="status-pill">
+                      <span class="status-dot-active"></span>
+                      <span>Online</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+        </div>
+
+        <!-- SECTION 8: ABOUT PLATFORM -->
+        <section class="section-container fade-in" style="margin-top: 24px; margin-bottom: 0; animation-delay: 0.5s;">
+          <div class="glass-panel" style="padding: 24px; text-align: center;">
+            <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 1.1rem;">💠 E16 AI XR Technology Pvt Ltd</h3>
+            <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: #94a3b8;">AI Multi-Agent Traffic Simulation Platform</p>
+            <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 0.8rem; color: #64748b;">
+              <span><strong>Version:</strong> 2.2.0-Enterprise</span>
+              <span><strong>Build:</strong> 849</span>
+              <span><strong>License:</strong> Commercial Enterprise License</span>
+              <span><strong>Copyright:</strong> &copy; 2026 E16 AI XR Technology Pvt Ltd</span>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/admin-settings.js"></script>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="admin-toast" class="admin-toast" role="alert" aria-live="polite"></div>
+
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+</body>
+</html>

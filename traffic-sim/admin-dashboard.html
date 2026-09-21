@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Command Center - E16 AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      
+            <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link ${activeId === 'dashboard' ? 'active' : ''}">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link ${activeId === 'users' ? 'active' : ''}">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link ${activeId === 'orgs' ? 'active' : ''}">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link ${activeId === 'analytics' ? 'active' : ''}">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link ${activeId === 'payments' ? 'active' : ''}">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link ${activeId === 'reports' ? 'active' : ''}">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link ${activeId === 'settings' ? 'active' : ''}">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title">Enterprise Command Center</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search resources, docs, users...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">
+            🔔 <span class="badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+        
+        <!-- WELCOME SECTION -->
+        <section class="welcome-hero glass-panel">
+          <div class="hero-bg-effect"></div>
+          <div class="hero-content">
+            <h2 class="welcome-title">Welcome Administrator</h2>
+            <p class="welcome-subtitle">Enterprise Command Center</p>
+            <p class="welcome-tagline">Centralized AI Simulation Management Platform • E16 AI XR Technology Pvt Ltd</p>
+          </div>
+        </section>
+
+        <!-- STATISTICS GRID -->
+        <section class="stats-grid">
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-header">
+              <span class="stat-title">Total Users</span>
+              <span class="stat-icon blue">👥</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-total-users" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+          
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.2s;">
+            <div class="stat-header">
+              <span class="stat-title">Pending Activation</span>
+              <span class="stat-icon warning">⏳</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-pending-users" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.3s;">
+            <div class="stat-header">
+              <span class="stat-title">Activated Users</span>
+              <span class="stat-icon success">✅</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-activated-users" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.4s;">
+            <div class="stat-header">
+              <span class="stat-title">Organizations</span>
+              <span class="stat-icon purple">🏢</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-organizations" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.5s;">
+            <div class="stat-header">
+              <span class="stat-title">Today's Reg.</span>
+              <span class="stat-icon cyan">📅</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-today-reg" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+
+          <div class="stat-card glass-panel fade-in" style="animation-delay: 0.6s;">
+            <div class="stat-header">
+              <span class="stat-title">Monthly Reg.</span>
+              <span class="stat-icon primary">📈</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value counter" id="stat-monthly-reg" data-target="0">...</h3>
+              <div class="stat-trend neutral"><span class="trend-label">Loading...</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAIN LAYOUT GRID -->
+        <div class="dashboard-layout">
+          
+          <!-- LEFT COLUMN (Main Feed) -->
+          <div class="layout-main-col">
+            
+            <!-- Quick Actions -->
+            <section class="section-container fade-in" style="animation-delay: 0.7s;">
+              <h3 class="section-title">Quick Actions</h3>
+              <div class="quick-actions-grid">
+                <button class="action-btn glass-panel primary-action">
+                  <span class="action-icon">👥</span> Manage Users
+                </button>
+                <button class="action-btn glass-panel">
+                  <span class="action-icon">📈</span> Analytics
+                </button>
+                <button class="action-btn glass-panel">
+                  <span class="action-icon">📑</span> Reports
+                </button>
+                <button class="action-btn glass-panel">
+                  <span class="action-icon">💳</span> Payments
+                </button>
+              </div>
+            </section>
+
+            <!-- Recent Registrations -->
+            <section class="section-container fade-in" style="animation-delay: 0.75s;">
+              <h3 class="section-title">Recent Registrations</h3>
+              <div class="quick-actions-grid" id="recent-registrations-list">
+                <div class="glass-panel" style="padding: 16px; display: flex; align-items: center; gap: 12px; opacity: 0.5;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+                  <div style="flex: 1;">
+                    <div style="height: 12px; width: 60%; background: rgba(255,255,255,0.1); margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div style="height: 10px; width: 40%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="section-container fade-in" style="animation-delay: 0.8s;">
+              <h3 class="section-title">Recent Activity</h3>
+              <div class="activity-feed glass-panel" id="recent-activity-list">
+                <div class="activity-item" style="opacity: 0.5;">
+                  <div class="activity-indicator" style="background: rgba(255,255,255,0.1);"></div>
+                  <div class="activity-content">
+                    <div style="height: 12px; width: 80%; background: rgba(255,255,255,0.1); margin-bottom: 8px; border-radius: 4px;"></div>
+                    <div style="height: 10px; width: 30%; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- System Status -->
+            <section class="section-container fade-in" style="animation-delay: 0.9s;">
+              <h3 class="section-title">System Status</h3>
+              <div class="status-grid">
+                <div class="status-card glass-panel">
+                  <div class="status-info">
+                    <span class="status-name">Firestore</span>
+                    <span class="status-dot online"></span>
+                  </div>
+                  <div class="status-value">Online</div>
+                </div>
+                <div class="status-card glass-panel">
+                  <div class="status-info">
+                    <span class="status-name">Authentication</span>
+                    <span class="status-dot online"></span>
+                  </div>
+                  <div class="status-value">Online</div>
+                </div>
+                <div class="status-card glass-panel">
+                  <div class="status-info">
+                    <span class="status-name">Hosting</span>
+                    <span class="status-dot online"></span>
+                  </div>
+                  <div class="status-value">Online</div>
+                </div>
+                <div class="status-card glass-panel">
+                  <div class="status-info">
+                    <span class="status-name">Simulation API</span>
+                    <span class="status-dot online"></span>
+                  </div>
+                  <div class="status-value">Online</div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- RIGHT COLUMN (Side Panel) -->
+          <div class="layout-side-col fade-in" style="animation-delay: 1.0s;">
+            
+            <!-- System Health -->
+            <section class="section-container">
+              <h3 class="section-title">System Health</h3>
+              <div class="side-card glass-panel">
+                <div class="health-metric">
+                  <div class="health-header">
+                    <span>CPU Usage</span>
+                    <span>32%</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width: 32%; background: var(--color-primary);"></div></div>
+                </div>
+                <div class="health-metric">
+                  <div class="health-header">
+                    <span>Memory</span>
+                    <span>68%</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width: 68%; background: var(--color-warning);"></div></div>
+                </div>
+                <div class="health-metric">
+                  <div class="health-header">
+                    <span>API Latency</span>
+                    <span>124ms</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width: 15%; background: var(--color-success);"></div></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Upcoming Tasks -->
+            <section class="section-container">
+              <h3 class="section-title">Upcoming Tasks</h3>
+              <div class="side-card glass-panel">
+                <div class="task-list">
+                  <div class="task-item">
+                    <input type="checkbox" class="task-check" />
+                    <span class="task-text">Review 14 pending users</span>
+                  </div>
+                  <div class="task-item">
+                    <input type="checkbox" class="task-check" />
+                    <span class="task-text">Update simulation model v4.3</span>
+                  </div>
+                  <div class="task-item">
+                    <input type="checkbox" class="task-check" />
+                    <span class="task-text">Generate weekly billing report</span>
+                  </div>
+                  <div class="task-item">
+                    <input type="checkbox" class="task-check" />
+                    <span class="task-text">Check hosting bandwidth limits</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            <!-- Recent Notifications -->
+            <section class="section-container">
+              <h3 class="section-title">Notifications</h3>
+              <div class="side-card glass-panel">
+                <div class="notification-list">
+                  <div class="notif-item">
+                    <div class="notif-icon danger">⚠️</div>
+                    <div class="notif-text">High traffic detected on Node A</div>
+                  </div>
+                  <div class="notif-item">
+                    <div class="notif-icon info">ℹ️</div>
+                    <div class="notif-text">Maintenance scheduled for Sunday</div>
+                  </div>
+                  <div class="notif-item">
+                    <div class="notif-icon success">🎉</div>
+                    <div class="notif-text">Goal reached: 1,000 active sims</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <span>&copy; 2026 E16 AI XR Technology Pvt Ltd. All rights reserved.</span>
+          <span>AI Multi-Agent Traffic Simulation Platform | Version 2.2.0-Enterprise</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    // Update date and time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+  <script type="module" src="/admin-dashboard.js"></script>
+</body>
+</html>

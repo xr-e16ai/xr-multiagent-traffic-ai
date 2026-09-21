@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile - Enterprise Command Center</title>
+  <meta name="description" content="Enterprise User Profile Workspace - E16 AI XR Technology">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link active">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        <a href="/admin-settings.html" class="nav-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title" id="page-title">User Profile</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search resources, docs, users...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">🔔 <span class="badge">3</span></div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+
+        <!-- BREADCRUMB / NAV BAR -->
+        <div class="ud-breadcrumb fade-in">
+          <a href="/admin-dashboard.html" class="ud-breadcrumb-link">🏠 Dashboard</a>
+          <span class="ud-breadcrumb-sep">›</span>
+          <a href="/admin-users.html" class="ud-breadcrumb-link">Users</a>
+          <span class="ud-breadcrumb-sep">›</span>
+          <span class="ud-breadcrumb-current" id="breadcrumb-name">Loading...</span>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div id="loading-state" class="ud-loading-wrap">
+          <div class="ud-spinner"></div>
+          <p>Loading user profile…</p>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div id="error-state" class="ud-error-wrap" style="display:none;">
+          <div class="glass-panel" style="padding: 60px; text-align: center; max-width: 500px;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">⚠️</div>
+            <h2 style="color: #fff; margin-bottom: 12px;">User Not Found</h2>
+            <p style="color: var(--text-muted); line-height: 1.6;">This user record could not be loaded from Firestore. The user may have been deleted or the link is invalid.</p>
+            <button class="action-btn glass-panel primary-action" style="margin-top: 32px;" onclick="window.location.href='/admin-users.html'">← Back to Users</button>
+          </div>
+        </div>
+
+        <!-- MAIN PROFILE CONTENT -->
+        <div id="profile-content" style="display:none;">
+
+          <!-- PROFILE HERO HEADER -->
+          <section class="ud-hero glass-panel fade-in">
+            <div class="ud-hero-bg"></div>
+            <div class="ud-hero-inner">
+              <div class="ud-avatar-xl" id="hero-avatar">?</div>
+              <div class="ud-hero-info">
+                <div class="ud-hero-name-row">
+                  <h2 id="hero-name" class="ud-hero-name">Loading...</h2>
+                  <span class="status-badge" id="hero-status-badge">Pending</span>
+                </div>
+                <div class="ud-hero-meta">
+                  <span>🏢 <span id="hero-org">—</span></span>
+                  <span>📞 <span id="hero-phone">—</span></span>
+                  <span>🔑 UID: <span id="hero-uid" class="ud-uid-text">—</span></span>
+                </div>
+              </div>
+              <div class="ud-hero-actions">
+                <button class="btn-icon approve" id="btn-approve" title="Approve User" disabled>✓ Approve</button>
+                <button class="btn-icon" id="btn-deactivate" title="Deactivate User" disabled>⏸️ Deactivate</button>
+                <button class="btn-icon delete" id="btn-delete" title="Delete User" disabled>🗑️ Delete</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- THREE-COLUMN GRID -->
+          <div class="ud-grid">
+
+            <!-- LEFT: Profile Details -->
+            <div class="ud-col-left">
+
+              <!-- Profile Card -->
+              <section class="ud-card glass-panel fade-in" style="animation-delay:0.1s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">👤</span>
+                  <h3 class="ud-card-title">Profile Information</h3>
+                </div>
+                <div class="ud-field-list">
+                  <div class="ud-field"><span class="ud-field-label">Full Name</span><span class="ud-field-value" id="d-name">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Organization</span><span class="ud-field-value" id="d-org">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Phone Number</span><span class="ud-field-value" id="d-phone">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">User UID</span><span class="ud-field-value ud-mono" id="d-uid">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Role</span><span class="ud-field-value" id="d-role">—</span></div>
+                </div>
+              </section>
+
+              <!-- Account Status Card -->
+              <section class="ud-card glass-panel fade-in" style="animation-delay:0.15s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">📋</span>
+                  <h3 class="ud-card-title">Account Status</h3>
+                </div>
+                <div class="ud-field-list">
+                  <div class="ud-field"><span class="ud-field-label">Approval Status</span><span class="ud-field-value" id="d-approval">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Subscription</span><span class="ud-field-value" id="d-subscription">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Instruction Accepted</span><span class="ud-field-value" id="d-instruction">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Registration Date</span><span class="ud-field-value" id="d-created">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Last Login</span><span class="ud-field-value" id="d-lastlogin">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Approved By</span><span class="ud-field-value" id="d-approved-by">—</span></div>
+                  <div class="ud-field"><span class="ud-field-label">Approved Date</span><span class="ud-field-value" id="d-approved-at">—</span></div>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- CENTER: Timeline + Simulation -->
+            <div class="ud-col-center">
+
+              <!-- Account Timeline -->
+              <section class="ud-card glass-panel fade-in" style="animation-delay:0.2s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">🕐</span>
+                  <h3 class="ud-card-title">Account Timeline</h3>
+                </div>
+                <div class="ud-timeline" id="user-timeline">
+                  <!-- Dynamically injected -->
+                </div>
+              </section>
+
+              <!-- Simulation Status -->
+              <section class="ud-card glass-panel fade-in" style="animation-delay:0.25s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">🚦</span>
+                  <h3 class="ud-card-title">Simulation Status</h3>
+                </div>
+                <div class="ud-sim-grid">
+                  <div class="ud-sim-card glass-panel">
+                    <div class="ud-sim-icon">📖</div>
+                    <div class="ud-sim-label">Introduction</div>
+                    <div class="ud-sim-value" id="sim-intro">—</div>
+                  </div>
+                  <div class="ud-sim-card glass-panel">
+                    <div class="ud-sim-icon">🎯</div>
+                    <div class="ud-sim-label">Sim Access</div>
+                    <div class="ud-sim-value" id="sim-access">—</div>
+                  </div>
+                  <div class="ud-sim-card glass-panel">
+                    <div class="ud-sim-icon">✅</div>
+                    <div class="ud-sim-label">Current Status</div>
+                    <div class="ud-sim-value" id="sim-status">—</div>
+                  </div>
+                  <div class="ud-sim-card glass-panel">
+                    <div class="ud-sim-icon">🕰️</div>
+                    <div class="ud-sim-label">Last Activity</div>
+                    <div class="ud-sim-value" id="sim-last">—</div>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- RIGHT: Action Panel + Placeholder Panels -->
+            <div class="ud-col-right">
+
+              <!-- Administrator Actions -->
+              <section class="ud-card glass-panel fade-in" style="animation-delay:0.3s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">⚡</span>
+                  <h3 class="ud-card-title">Administrator Actions</h3>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Action execution will be available in a future phase.</p>
+                <div class="ud-action-btns">
+                  <button class="ud-action-btn ud-btn-approve" disabled>✓ Approve User</button>
+                  <button class="ud-action-btn ud-btn-deactivate" disabled>⏸ Deactivate User</button>
+                  <button class="ud-action-btn ud-btn-delete" disabled>🗑 Delete User</button>
+                </div>
+              </section>
+
+              <!-- Payment Info Placeholder -->
+              <section class="ud-card glass-panel fade-in ud-coming-soon" style="animation-delay:0.35s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">💳</span>
+                  <h3 class="ud-card-title">Payment Information</h3>
+                  <span class="ud-coming-badge">Coming Soon</span>
+                </div>
+                <p class="ud-coming-text">Billing history and subscription payment data will be shown here.</p>
+              </section>
+
+              <!-- Training Progress Placeholder -->
+              <section class="ud-card glass-panel fade-in ud-coming-soon" style="animation-delay:0.4s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">📚</span>
+                  <h3 class="ud-card-title">Training Progress</h3>
+                  <span class="ud-coming-badge">Coming Soon</span>
+                </div>
+                <p class="ud-coming-text">Module completion, quiz scores, and certification progress.</p>
+              </section>
+
+              <!-- Activity History Placeholder -->
+              <section class="ud-card glass-panel fade-in ud-coming-soon" style="animation-delay:0.45s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">📜</span>
+                  <h3 class="ud-card-title">Activity History</h3>
+                  <span class="ud-coming-badge">Coming Soon</span>
+                </div>
+                <p class="ud-coming-text">Detailed login history, simulation sessions, and platform events.</p>
+              </section>
+
+              <!-- Administrator Notes Placeholder -->
+              <section class="ud-card glass-panel fade-in ud-coming-soon" style="animation-delay:0.5s;">
+                <div class="ud-card-header">
+                  <span class="ud-card-icon">📝</span>
+                  <h3 class="ud-card-title">Administrator Notes</h3>
+                  <span class="ud-coming-badge">Coming Soon</span>
+                </div>
+                <p class="ud-coming-text">Internal admin notes and review remarks for this user account.</p>
+              </section>
+
+            </div>
+          </div>
+
+        </div>
+        <!-- /profile-content -->
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/admin-user-details.js"></script>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="admin-toast" class="admin-toast" role="alert" aria-live="polite"></div>
+
+  <!-- CONFIRM DIALOG -->
+  <div id="admin-confirm-overlay" class="admin-confirm-overlay" style="display:none;">
+    <div class="admin-confirm-dialog glass-panel">
+      <div class="admin-confirm-icon" id="confirm-icon">🗑️</div>
+      <h3 class="admin-confirm-title" id="confirm-title">Confirm Action</h3>
+      <p class="admin-confirm-msg" id="confirm-msg">Are you sure you want to perform this action?</p>
+      <div class="admin-confirm-btns">
+        <button class="btn-icon" id="confirm-cancel-btn">Cancel</button>
+        <button class="btn-icon delete" id="confirm-ok-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

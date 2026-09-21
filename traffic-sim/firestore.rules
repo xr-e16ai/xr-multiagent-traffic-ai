@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+
+      // ── CREATE: Only authenticated user can create their own document ──
+      // Forces safe defaults to prevent privilege escalation
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.role == "user"
+                    && request.resource.data.isApproved == false
+                    && request.resource.data.subscriptionStatus == "pending"
+                    && (!("simulationAccess" in request.resource.data) 
+                        || request.resource.data.simulationAccess == false);
+
+      // ── READ: Authenticated user can read only their own document ──
+      allow get: if request.auth != null
+                 && request.auth.uid == userId;
+
+      // ── UPDATE: Authenticated user can update only their own document ──
+      // CANNOT modify privileged fields
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.isApproved == resource.data.isApproved
+                    && request.resource.data.subscriptionStatus == resource.data.subscriptionStatus
+                    && (!("simulationAccess" in request.resource.data) 
+                        || request.resource.data.simulationAccess == resource.data.simulationAccess)
+                    && (!("approvedAt" in request.resource.data) 
+                        || request.resource.data.approvedAt == resource.data.approvedAt)
+                    && (!("approvedBy" in request.resource.data) 
+                        || request.resource.data.approvedBy == resource.data.approvedBy);
+
+      // ── DELETE: Normal users cannot delete documents ──
+      allow delete: if false;
+
+      // ── LIST/QUERY: Not allowed from the browser ──
+      // Admin reads go through the backend (Firebase Admin SDK bypasses rules)
+      allow list: if false;
+    }
+
+    // ── Default: deny everything else ──
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

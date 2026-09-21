@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management - Enterprise Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      
+            <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link ${activeId === 'dashboard' ? 'active' : ''}">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link ${activeId === 'users' ? 'active' : ''}">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link ${activeId === 'orgs' ? 'active' : ''}">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link ${activeId === 'analytics' ? 'active' : ''}">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link ${activeId === 'payments' ? 'active' : ''}">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link ${activeId === 'reports' ? 'active' : ''}">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link ${activeId === 'settings' ? 'active' : ''}">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title">User Management</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search resources, docs, users...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">
+            🔔 <span class="badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+        
+        <div class="page-header flex-between fade-in">
+          <div>
+            <h2 class="section-title" style="margin: 0; font-size: 1.5rem;">Enterprise Users</h2>
+            <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 0.95rem;">Manage user registrations, approvals, and subscriptions.</p>
+          </div>
+          <div>
+            <button class="action-btn glass-panel primary-action" style="padding: 10px 20px; font-size: 0.9rem;">
+              + Add User
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar glass-panel fade-in" style="animation-delay: 0.1s;">
+          <div class="filter-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="user-search-input" placeholder="Search by Name, Organization, or Phone...">
+          </div>
+          <div class="filter-options">
+            <select id="user-status-filter" class="glass-select">
+              <option value="all">Status: All</option>
+              <option value="pending">Status: Pending</option>
+              <option value="activated">Status: Activated</option>
+            </select>
+            <select id="user-sort-filter" class="glass-select">
+              <option value="newest">Sort: Newest</option>
+              <option value="oldest">Sort: Oldest</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="table-container glass-panel fade-in" style="animation-delay: 0.2s;">
+          <table class="data-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Organization</th>
+                <th>Phone Number</th>
+                <th>Registration Date</th>
+                <th>Last Login</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Skeletons while loading -->
+              <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+            </tbody>
+          </table>
+          
+          <!-- PAGINATION -->
+          <div class="pagination-container">
+            <div class="pagination-info" id="pagination-info">Showing 0 to 0 of 0 entries</div>
+            <div class="pagination-controls">
+              <button class="page-btn glass-panel" id="prev-page" disabled>Previous</button>
+              <div class="page-numbers" id="page-numbers">
+                <button class="page-btn active">1</button>
+              </div>
+              <button class="page-btn glass-panel" id="next-page" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+        
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/admin-users.js"></script>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="admin-toast" class="admin-toast" role="alert" aria-live="polite"></div>
+
+  <!-- CONFIRM DIALOG -->
+  <div id="admin-confirm-overlay" class="admin-confirm-overlay" style="display:none;">
+    <div class="admin-confirm-dialog glass-panel">
+      <div class="admin-confirm-icon" id="confirm-icon">🗑️</div>
+      <h3 class="admin-confirm-title" id="confirm-title">Confirm Action</h3>
+      <p class="admin-confirm-msg" id="confirm-msg">Are you sure you want to perform this action?</p>
+      <div class="admin-confirm-btns">
+        <button class="btn-icon" id="confirm-cancel-btn">Cancel</button>
+        <button class="btn-icon delete" id="confirm-ok-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instructions – AI Traffic Simulation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ═══ RESET & BASE ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #4facfe;
+      --accent:     #00f2fe;
+      --bg-dark:    #0a0e1a;
+      --bg-card:    rgba(255,255,255,0.04);
+      --border:     rgba(255,255,255,0.08);
+      --text:       #e8eaf6;
+      --text-muted: #8892b0;
+      --success:    #64ffda;
+      --warning:    #ffd700;
+      --danger:     #ff6b6b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══ ANIMATED BG ═══ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(79,172,254,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,242,254,.10) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 60% 50%, rgba(100,255,218,.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ═══ PROGRESS BAR ═══ */
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 28px 0 20px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .step-dot.done {
+      background: linear-gradient(135deg, var(--success), #00bfa5);
+      color: #000;
+      box-shadow: 0 0 16px rgba(100,255,218,.4);
+    }
+
+    .step-dot.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #000;
+      box-shadow: 0 0 20px rgba(79,172,254,.5);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .step-dot.todo {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 20px rgba(79,172,254,.5); }
+      50%       { box-shadow: 0 0 32px rgba(79,172,254,.9); }
+    }
+
+    .step-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-muted);
+    }
+
+    .step-label.active { color: var(--primary); }
+    .step-label.done   { color: var(--success); }
+
+    .step-connector {
+      width: 80px;
+      height: 2px;
+      background: var(--border);
+      margin: 0 6px 20px;
+    }
+
+    .step-connector.done { background: linear-gradient(90deg, var(--success), var(--primary)); }
+
+    /* ═══ SECTION TITLES ═══ */
+    .section { margin-bottom: 56px; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    /* ═══ HERO SECTION ═══ */
+    .hero {
+      text-align: center;
+      padding: 48px 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(79,172,254,.1);
+      border: 1px solid rgba(79,172,254,.25);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: .5px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* ═══ GLASS CARD ═══ */
+    .glass {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    /* ═══ AGENT CARDS ═══ */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .agent-card {
+      padding: 32px 24px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: default;
+    }
+
+    .agent-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px rgba(0,0,0,.4);
+      border-color: rgba(79,172,254,.3);
+    }
+
+    .agent-icon {
+      font-size: 2.6rem;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(79,172,254,.3));
+    }
+
+    .agent-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      letter-spacing: .3px;
+    }
+
+    .agent-card p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ═══ VIDEO GALLERY ═══ */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .video-card {
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,.5);
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0d1b2a;
+      overflow: hidden;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-placeholder {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(79,172,254,.05), rgba(0,242,254,.05));
+      position: absolute;
+      inset: 0;
+    }
+
+    .video-placeholder .ph-icon { font-size: 3rem; opacity: .5; }
+
+    .video-placeholder p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .video-card-body {
+      padding: 20px;
+    }
+
+    .video-card-body h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .video-card-body p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ═══ INSTRUCTIONS CARD ═══ */
+    .instruction-card {
+      padding: 36px 40px;
+    }
+
+    .instruction-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .instruction-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .instruction-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .instruction-list li::before {
+      content: '→';
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ═══ REMINDER BOX ═══ */
+    .reminder-box {
+      background: linear-gradient(135deg, rgba(255,215,0,.06), rgba(255,107,107,.06));
+      border: 1px solid rgba(255,215,0,.2);
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .reminder-icon { font-size: 2rem; flex-shrink: 0; }
+
+    .reminder-box h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--warning);
+      margin-bottom: 10px;
+    }
+
+    .reminder-box p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ═══ CONFIRMATION SECTION ═══ */
+    .confirm-card {
+      padding: 40px;
+      text-align: center;
+    }
+
+    .confirm-card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .confirm-card p {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 32px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .checkbox-row label {
+      font-size: 0.95rem;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    #continue-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 48px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      cursor: not-allowed;
+      opacity: 0.35;
+      transition: all 0.3s ease;
+      letter-spacing: .3px;
+    }
+
+    #continue-btn.enabled {
+      opacity: 1;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(79,172,254,.35);
+    }
+
+    #continue-btn.enabled:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(79,172,254,.5);
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 640px) {
+      .instruction-card { padding: 24px 20px; }
+      .confirm-card     { padding: 28px 20px; }
+      .step-connector   { width: 40px; }
+      .reminder-box     { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ─── PROGRESS BAR ─── -->
+  <nav class="progress-bar" aria-label="Setup Progress">
+    <div class="step">
+      <div class="step-dot done">✓</div>
+      <span class="step-label done">Login</span>
+    </div>
+    <div class="step-connector done"></div>
+    <div class="step">
+      <div class="step-dot done">✓</div>
+      <span class="step-label done">Dashboard</span>
+    </div>
+    <div class="step-connector done"></div>
+    <div class="step">
+      <div class="step-dot active">3</div>
+      <span class="step-label active">Instructions</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step">
+      <div class="step-dot todo">4</div>
+      <span class="step-label">Simulation</span>
+    </div>
+  </nav>
+
+  <!-- ─── SECTION 1: HERO ─── -->
+  <section class="section hero">
+    <div class="hero-badge">
+      <span>🤖</span> AI Multi-Agent Traffic Simulation
+    </div>
+    <h1>Welcome to the Future<br>of Road Safety Training</h1>
+    <p>
+      You are about to enter an AI-powered road traffic simulation where four intelligent
+      agents — AI Drivers, AI Pedestrians, AI Traffic Lights and an AI Safety Agent —
+      interact in real time to create a realistic and educational road environment.
+    </p>
+  </section>
+
+  <!-- ─── SECTION 2: AGENT OVERVIEW ─── -->
+  <section class="section">
+    <p class="section-label">Simulation Overview</p>
+    <div class="agent-grid" id="agent-grid">
+      <!-- Cards are rendered by JS for reusability -->
+    </div>
+  </section>
+
+  <!-- ─── SECTION 3: VIDEO GALLERY ─── -->
+  <section class="section">
+    <p class="section-label">Watch How the Simulation Works</p>
+    <div class="video-grid" id="video-grid">
+      <!-- Video cards are rendered by JS -->
+    </div>
+  </section>
+
+  <!-- ─── SECTION 4: SAFETY INSTRUCTIONS ─── -->
+  <section class="section">
+    <p class="section-label">Safety Instructions</p>
+    <div class="glass instruction-card">
+      <h3>📋 Before You Begin</h3>
+      <ul class="instruction-list">
+        <li>Always obey traffic signals — the AI will penalise rule violations.</li>
+        <li>Observe approaching vehicles before crossing the road.</li>
+        <li>AI-controlled traffic reacts dynamically to your actions.</li>
+        <li>Unsafe behaviour increases your risk score in real time.</li>
+        <li>Complete the simulation carefully and attentively.</li>
+        <li>This platform is intended for educational purposes only.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 5: SAFETY REMINDER ─── -->
+  <section class="section">
+    <div class="reminder-box">
+      <span class="reminder-icon">⚠️</span>
+      <div>
+        <h4>Safety Reminder</h4>
+        <p>
+          Always follow real-world traffic rules. This simulation is designed to improve
+          road safety awareness and decision-making. <strong style="color:#ffd700">Do not imitate unsafe behaviour in real life.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: SIMULATION ACCESS RESTRICTED (HIDDEN) ─── -->
+  <section class="section" id="review-section" style="display: none;">
+    <div class="reminder-box" style="background: linear-gradient(135deg, rgba(255,107,107,.06), rgba(255,50,50,.06)); border-color: rgba(255,107,107,.3);">
+      <span class="reminder-icon">⛔</span>
+      <div>
+        <h4 style="color: #ff6b6b;">Simulation Access Restricted</h4>
+        <p>
+          You have successfully registered and signed in.<br><br>
+          Your account is currently awaiting activation.<br><br>
+          Please contact <strong>E16 AI XR Technology Pvt Ltd</strong> to complete the activation process and receive payment instructions.<br><br>
+          <strong>Phone:</strong><br>
+          +91 9840034916<br><br>
+          <strong>Email:</strong><br>
+          info@e16ai.com<br><br>
+          Once your account has been activated, you will immediately gain access to the AI Multi-Agent Traffic Simulation.<br><br>
+          Thank you.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 6: CONFIRMATION ─── -->
+  <section class="section">
+    <div class="glass confirm-card">
+      <h3>✅ Ready to Begin?</h3>
+      <p>Please confirm you have read and understood the safety instructions.</p>
+
+      <label class="checkbox-row" for="accept-checkbox">
+        <input type="checkbox" id="accept-checkbox" />
+        <span>I have read and understood the instructions and agree to follow safety guidelines during the simulation.</span>
+      </label>
+
+      <button id="continue-btn" disabled aria-disabled="true">
+        Continue to Simulation →
+      </button>
+    </div>
+  </section>
+
+</div><!-- /page-wrap -->
+
+<script type="module" src="/src/instruction.js"></script>
+
+</body>
+</html>

@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace this with your actual Firebase config object from the Firebase Console
 const firebaseConfig = {
   apiKey: "AIzaSyBRiI-yHfl7Ja_icXP2dVRGTAlQRiPU_ys",
   authDomain: "multi-agent-traffic-sim-2026.firebaseapp.com",
@@ -15,6 +14,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// getFirestore() uses the default Firestore database — no named DB argument
 const db = getFirestore(app);
 
 export { auth, db, app };

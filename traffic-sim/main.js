@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Simulation } from './src/simulation.js';
 import { GEMINI_API_KEY } from './api_key.js';
-import { auth, db } from './src/firebase-config.js';
-import { onAuthStateChanged } from "firebase/auth";
+import { db } from './src/firebase-config.js';
 import { doc, getDoc } from "firebase/firestore";
 
 class App {
@@ -294,12 +293,22 @@ class App {
     }
 }
 
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
+(async () => {
+    const loginStatus = sessionStorage.getItem("loginStatus");
+    const uid = sessionStorage.getItem("uid");
+
+    if (loginStatus === "true" && uid) {
+        // Gate: user must have accepted instructions
+        if (localStorage.getItem("instructionAccepted") !== "true") {
+            window.location.href = "/instruction.html";
+            return;
+        }
         try {
-            const docRef = doc(db, "users", user.uid);
+            const docRef = doc(db, "users", uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists() && docSnap.data().isApproved === true) {
+                document.getElementById('setup-overlay').style.display = 'flex';
+                document.getElementById('main-container').style.display = 'flex';
                 if (!window.simApp) {
                     new App();
                 }
@@ -313,4 +322,4 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         window.location.href = '/login.html';
     }
-});
+})();

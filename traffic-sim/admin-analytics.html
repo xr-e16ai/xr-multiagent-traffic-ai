@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics - Enterprise Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link active">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title">Enterprise Analytics Dashboard</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search resources, docs, users...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">
+            🔔 <span class="badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+        
+        <!-- CONTROL BAR -->
+        <div class="page-header flex-between fade-in">
+          <div>
+            <h2 class="section-title" style="margin: 0; font-size: 1.5rem;">Platform Intelligence</h2>
+            <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 0.95rem;">Live insights into user acquisition, activity, and platform health.</p>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <select id="analytics-date-filter" class="glass-select" style="min-width: 150px;">
+              <option value="today">Today</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="alltime" selected>All Time</option>
+            </select>
+            <button class="action-btn glass-panel" onclick="alert('PDF Export generated!')">📄 Export PDF</button>
+            <button class="action-btn glass-panel" onclick="alert('Excel Export generated!')">📊 Export Excel</button>
+          </div>
+        </div>
+
+        <!-- KPI GRID -->
+        <section class="stats-grid fade-in" style="animation-delay: 0.1s; margin-top: 24px;">
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Total Registered Users</span>
+              <span class="stat-icon blue">👥</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-total-users">...</h3>
+            </div>
+          </div>
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Activated Users</span>
+              <span class="stat-icon success">✅</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-activated-users">...</h3>
+            </div>
+          </div>
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Pending Activation</span>
+              <span class="stat-icon warning">⏳</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-pending-users">...</h3>
+            </div>
+          </div>
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Organizations</span>
+              <span class="stat-icon purple">🏢</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-organizations">...</h3>
+            </div>
+          </div>
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Today's Registrations</span>
+              <span class="stat-icon cyan">📅</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-today-reg">...</h3>
+            </div>
+          </div>
+          <div class="stat-card glass-panel">
+            <div class="stat-header">
+              <span class="stat-title">Monthly Registrations</span>
+              <span class="stat-icon primary">📈</span>
+            </div>
+            <div class="stat-body">
+              <h3 class="stat-value" id="kpi-monthly-reg">...</h3>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHARTS SECTION -->
+        <div class="dashboard-layout" style="margin-top: 24px; gap: 24px;">
+          
+          <!-- MAIN CHARTS COL -->
+          <div class="layout-main-col">
+            <!-- Daily Registrations (Area) -->
+            <section class="section-container fade-in" style="animation-delay: 0.2s;">
+              <h3 class="section-title">Daily Registrations (Last 30 Days)</h3>
+              <div class="glass-panel" style="padding: 24px; height: 350px;">
+                <canvas id="chart-daily-reg"></canvas>
+              </div>
+            </section>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              <!-- Monthly Registrations (Line) -->
+              <section class="section-container fade-in" style="animation-delay: 0.3s; margin: 0;">
+                <h3 class="section-title">Monthly Registrations</h3>
+                <div class="glass-panel" style="padding: 24px; height: 300px;">
+                  <canvas id="chart-monthly-reg"></canvas>
+                </div>
+              </section>
+              
+              <!-- Registration Trend (Line - Compare) -->
+              <section class="section-container fade-in" style="animation-delay: 0.4s; margin: 0;">
+                <h3 class="section-title">Registration Trend (MoM)</h3>
+                <div class="glass-panel" style="padding: 24px; height: 300px;">
+                  <canvas id="chart-trend"></canvas>
+                </div>
+              </section>
+            </div>
+
+            <!-- Top Organizations Data Table -->
+            <section class="section-container fade-in" style="animation-delay: 0.5s;">
+              <h3 class="section-title">Top Organizations</h3>
+              <div class="glass-panel" style="padding: 0; overflow: hidden;">
+                <table class="data-table" style="margin: 0; border: none;">
+                  <thead>
+                    <tr>
+                      <th style="padding: 16px 24px;">Organization Name</th>
+                      <th>Registered Users</th>
+                      <th>Activated</th>
+                      <th>Pending</th>
+                    </tr>
+                  </thead>
+                  <tbody id="top-orgs-body">
+                    <tr><td colspan="4" style="text-align: center; padding: 24px;">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          
+          <!-- SIDE CHARTS & FEED COL -->
+          <div class="layout-side-col">
+            <!-- Activated vs Pending (Doughnut) -->
+            <section class="section-container fade-in" style="animation-delay: 0.25s;">
+              <h3 class="section-title">User Status</h3>
+              <div class="glass-panel" style="padding: 24px; height: 300px; display: flex; justify-content: center; align-items: center;">
+                <canvas id="chart-status"></canvas>
+              </div>
+            </section>
+            
+            <!-- Organization Distribution (Horizontal Bar) -->
+            <section class="section-container fade-in" style="animation-delay: 0.35s;">
+              <h3 class="section-title">Organization Distribution</h3>
+              <div class="glass-panel" style="padding: 24px; height: 300px;">
+                <canvas id="chart-org-dist"></canvas>
+              </div>
+            </section>
+
+            <!-- System Health -->
+            <section class="section-container fade-in" style="animation-delay: 0.45s;">
+              <h3 class="section-title">System Health</h3>
+              <div class="glass-panel" style="padding: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #cbd5e1; font-size: 0.9rem;">Firestore DB</span>
+                    <span class="status-badge activated" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">● Online</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #cbd5e1; font-size: 0.9rem;">Authentication</span>
+                    <span class="status-badge activated" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">● Online</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #cbd5e1; font-size: 0.9rem;">Hosting</span>
+                    <span class="status-badge activated" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">● Online</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #cbd5e1; font-size: 0.9rem;">Simulation Engine</span>
+                    <span class="status-badge activated" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">● Online</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Recent Activity Feed -->
+            <section class="section-container fade-in" style="animation-delay: 0.55s;">
+              <h3 class="section-title">Recent Activity</h3>
+              <div class="glass-panel activity-feed" id="recent-activity-feed" style="max-height: 400px; overflow-y: auto;">
+                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading activity...</div>
+              </div>
+            </section>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/admin-analytics.js"></script>
+
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+</body>
+</html>

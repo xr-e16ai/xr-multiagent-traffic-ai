@@ -167,6 +167,24 @@
       overflow: hidden;
     }
 
+    .secondary-btn {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      color: #4facfe;
+      border: 1px solid #4facfe;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(79, 172, 254, 0.1);
+    }
+
     .primary-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
@@ -181,6 +199,39 @@
       color: #666;
       cursor: not-allowed;
       box-shadow: none;
+    }
+
+    .text-link {
+      color: #4facfe;
+      font-size: 0.85rem;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 15px;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+    
+    .text-link:hover {
+      color: #00f2fe;
+      text-decoration: underline;
+    }
+
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: #8892b0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      padding: 0;
+      transition: color 0.3s;
+    }
+    
+    .back-btn:hover {
+      color: #fff;
     }
 
     /* Loading Spinner */
@@ -228,11 +279,12 @@
       color: #52c41a;
       font-size: 0.95rem;
       font-weight: 500;
-      display: none;
       text-align: center;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 15px;
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     
@@ -241,11 +293,100 @@
       100% { opacity: 1; transform: scale(1); }
     }
 
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: #112240;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: #8892b0;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+    }
+    .view-section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* reCAPTCHA wrapper styling to blend with dark mode */
     #recaptcha-container {
       margin-top: 15px;
+      margin-bottom: 15px;
       display: flex;
       justify-content: center;
+    }
+
+    /* Checkmark circle */
+    .checkmark-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(82, 196, 26, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #52c41a;
     }
   </style>
 </head>
@@ -256,57 +397,176 @@
 
   <div class="login-container">
     <div class="glass-card">
-      <div class="header-content">
-        <div class="ai-icon">⬡</div>
-        <h1>AI Powered Multi-Agent Traffic Simulation</h1>
-        <p class="subtitle">Secure Access using Mobile OTP Verification</p>
+      
+      <!-- Landing View -->
+      <div id="view-landing" class="view-section active">
+        <div class="header-content">
+          <div class="ai-icon">⬡</div>
+          <h1>AI Powered Multi-Agent Traffic Simulation</h1>
+          <p class="subtitle">Welcome to the Platform</p>
+        </div>
+        
+        <button id="nav-signup-btn" class="primary-btn">Sign Up</button>
+        <button id="nav-returning-btn" class="secondary-btn">Returning User</button>
       </div>
 
-      <!-- Step 1: Phone Entry -->
-      <div id="step-1">
-        <div class="input-group">
-          <label>Full Name</label>
-          <div class="input-wrapper">
-            <input type="text" id="login-name" placeholder="Enter your Full Name" autocomplete="name" />
-          </div>
+      <!-- Sign Up View -->
+      <div id="view-signup" class="view-section">
+        <button class="back-btn" data-target="view-landing">← Back</button>
+        <div class="header-content" style="margin-bottom: 25px;">
+          <h1>Create Account</h1>
         </div>
 
-        <div class="input-group">
-          <label>Mobile Number</label>
-          <div class="input-wrapper has-prefix">
-            <span class="prefix">+91</span>
-            <input type="tel" id="login-phone" placeholder="Enter Mobile Number" maxlength="10" autocomplete="tel-national" />
+        <div id="signup-step-1">
+          <div class="input-group">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+              <input type="text" id="signup-name" placeholder="Enter your Full Name" autocomplete="name" />
+            </div>
           </div>
+          
+          <div class="input-group">
+            <label>Organization Name</label>
+            <div class="input-wrapper">
+              <input type="text" id="signup-org" placeholder="Enter Organization Name" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Email Address</label>
+            <div class="input-wrapper">
+              <input type="email" id="signup-email" placeholder="Enter Email Address" autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Mobile Number</label>
+            <div class="input-wrapper has-prefix">
+              <span class="prefix">+91</span>
+              <input type="tel" id="signup-phone" placeholder="Enter Mobile Number" maxlength="10" autocomplete="tel-national" />
+            </div>
+          </div>
+
+          <div id="recaptcha-container"></div>
+          <button id="signup-send-otp-btn" class="secondary-btn" disabled>
+            <span>Send OTP</span>
+            <div class="spinner"></div>
+          </button>
         </div>
 
-        <div id="recaptcha-container"></div>
-        <button id="send-otp-btn" class="primary-btn" disabled>
-          <span>Send OTP</span>
+        <!-- Step 2: OTP Verification -->
+        <div id="signup-step-2" style="display: none; margin-top: 15px;">
+          <div class="input-group">
+            <label>OTP Verification</label>
+            <div class="input-wrapper">
+              <input type="text" id="signup-otp" placeholder="Enter 6 Digit OTP" maxlength="6" autocomplete="one-time-code" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem; font-weight: 600;" />
+            </div>
+          </div>
+          <button id="signup-verify-otp-btn" class="secondary-btn" disabled>
+            <span>Verify OTP</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+
+        <button id="signup-final-btn" class="primary-btn" disabled style="margin-top: 20px;">
+          <span>Sign Up</span>
           <div class="spinner"></div>
         </button>
       </div>
-
-      <!-- Step 2: OTP Verification -->
-      <div id="step-2" style="display: none;">
-        <div class="input-group">
-          <label>OTP Verification</label>
-          <div class="input-wrapper">
-            <input type="text" id="login-otp" placeholder="Enter 6 Digit OTP" maxlength="6" autocomplete="one-time-code" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem; font-weight: 600;" />
+      
+      <!-- Sign Up Success View -->
+      <div id="view-signup-success" class="view-section text-center">
+        <div class="success-msg">
+          <div class="checkmark-circle">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </div>
+          <h2 style="color: #fff; margin: 0; font-size: 1.3rem;">Account Created Successfully</h2>
+          <p style="color: #a8b2d1; font-size: 0.95rem; line-height: 1.5; margin: 0; text-align: center;">
+            Thank you for registering.<br><br>
+            Your account has been created successfully.<br><br>
+            You can now sign in using your Full Name and Registered Mobile Number.
+          </p>
+          <button class="primary-btn" id="nav-from-success-btn" style="margin-top: 15px;">Go to Sign In</button>
         </div>
-        <button id="verify-otp-btn" class="primary-btn" disabled>
-          <span>Verify OTP</span>
-          <div class="spinner"></div>
-        </button>
       </div>
 
-      <!-- Success State -->
-      <div id="step-success" class="success-msg">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        Mobile Verified Successfully
+      <!-- Returning User View -->
+      <div id="view-returning" class="view-section">
+        <button class="back-btn" data-target="view-landing">← Back</button>
+        <div class="header-content" style="margin-bottom: 25px;">
+          <h1>Sign In</h1>
+        </div>
+        
+        <div id="signin-step-1">
+          <div class="input-group">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+              <input type="text" id="signin-name" placeholder="Enter your Full Name" autocomplete="name" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Mobile Number</label>
+            <div class="input-wrapper has-prefix">
+              <span class="prefix">+91</span>
+              <input type="tel" id="signin-phone" placeholder="Enter Mobile Number" maxlength="10" autocomplete="tel-national" />
+            </div>
+          </div>
+
+          <button id="signin-send-otp-btn" class="primary-btn" disabled>
+            <span>Send OTP</span>
+            <div class="spinner"></div>
+          </button>
+          <div id="signin-recaptcha-container"></div>
+        </div>
+
+        <div id="signin-step-2" style="display: none;">
+          <div class="input-group">
+            <label>Verification Code</label>
+            <div class="input-wrapper">
+              <input type="text" id="signin-otp" placeholder="Enter 6-digit OTP" maxlength="6" autocomplete="one-time-code" />
+            </div>
+            <p style="font-size: 0.75rem; color: #8892b0; margin-top: 5px;">OTP sent to your mobile number</p>
+          </div>
+
+          <button id="signin-verify-btn" class="primary-btn" disabled>
+            <span>Verify & Sign In</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+        
+        <div style="text-align: center;">
+          <a class="text-link" id="forgot-name-link">Forget Login Procedures</a>
+        </div>
       </div>
 
       <div id="login-msg" class="error-msg"></div>
+    </div>
+  </div>
+  
+  <!-- Forget Login Procedures Modal -->
+  <div class="modal-overlay" id="forgot-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Forget Login Procedures</h2>
+        <button class="close-btn" id="close-modal-btn">×</button>
+      </div>
+      <p style="color: #a8b2d1; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;">Enter your registered handphone number to receive your account details.</p>
+      
+      <div class="input-group">
+        <label>Registered Handphone Number</label>
+        <div class="input-wrapper has-prefix">
+          <span class="prefix">+91</span>
+          <input type="tel" id="forgot-phone" placeholder="Enter Mobile Number" maxlength="10" />
+        </div>
+      </div>
+      
+      <button id="forgot-submit-btn" class="primary-btn" disabled>
+        <span>Submit</span>
+        <div class="spinner"></div>
+      </button>
+      
+      <div id="forgot-msg" class="error-msg"></div>
     </div>
   </div>
 

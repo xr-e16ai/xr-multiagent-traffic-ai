@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organization Details - Enterprise Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="enterprise-admin-body">
+
+  <div class="admin-app">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="logo-icon">💠</div>
+        </div>
+        <div class="brand-text">
+          <h2 class="company-name">E16 AI XR Tech</h2>
+          <p class="product-name">Simulation Platform</p>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link active">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="nav-link logout" id="admin-logout-btn">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-label">Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn-icon" onclick="window.history.back()" title="Back to Organizations" style="color: var(--text-muted);">←</button>
+            <h1 class="page-title">Organization Details</h1>
+          </div>
+        </div>
+        <div class="header-center">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search resources, docs, users...">
+            <span class="search-shortcut">Ctrl+K</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
+          </div>
+          <div class="header-icon-btn notification-bell">
+            🔔 <span class="badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+              <span class="profile-name">Administrator</span>
+              <span class="profile-role">Super Admin</span>
+            </div>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE CONTENT -->
+      <main class="app-content">
+        
+        <!-- ORG HEADER SUMMARY -->
+        <div class="glass-panel fade-in" style="padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%;"></div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+              <p style="color: var(--color-primary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0;">Organization Profile</p>
+              <h2 id="detail-org-name" style="margin: 0; font-size: 2rem; color: #fff;">Loading...</h2>
+            </div>
+            
+            <div style="display: flex; gap: 24px; background: rgba(0,0,0,0.2); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Total Users</div>
+                <div id="detail-total-users" style="font-size: 1.5rem; font-weight: 600; color: #fff;">-</div>
+              </div>
+              <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Activated</div>
+                <div id="detail-activated-users" style="font-size: 1.5rem; font-weight: 600; color: var(--color-success);"> - </div>
+              </div>
+              <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Pending</div>
+                <div id="detail-pending-users" style="font-size: 1.5rem; font-weight: 600; color: var(--color-warning);"> - </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-header flex-between fade-in" style="animation-delay: 0.1s;">
+          <div>
+            <h3 class="section-title" style="margin: 0; font-size: 1.25rem;">Organization Members</h3>
+            <p style="color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.9rem;">Read-only view of users belonging to this organization.</p>
+          </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar glass-panel fade-in" style="animation-delay: 0.15s; display: flex; gap: 16px;">
+          <div class="filter-search" style="flex: 1;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="user-search-input" placeholder="Search Members by Name, Phone, Email...">
+          </div>
+          <div class="filter-options">
+            <select id="user-status-filter" class="glass-select">
+              <option value="all">Status: All</option>
+              <option value="pending">Status: Pending</option>
+              <option value="activated">Status: Activated</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="table-container glass-panel fade-in" style="animation-delay: 0.2s;">
+          <table class="data-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Registration Date</th>
+                <th>Last Login</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Skeletons while loading -->
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
+            </tbody>
+          </table>
+          
+          <!-- PAGINATION -->
+          <div class="pagination-container">
+            <div class="pagination-info" id="pagination-info">Showing 0 to 0 of 0 entries</div>
+            <div class="pagination-controls">
+              <button class="page-btn glass-panel" id="prev-page" disabled>Previous</button>
+              <div class="page-numbers" id="page-numbers">
+                <button class="page-btn active">1</button>
+              </div>
+              <button class="page-btn glass-panel" id="next-page" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+        
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/admin-organization-details.js"></script>
+
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+</body>
+</html>
