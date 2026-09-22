@@ -1,0 +1,45 @@
+# Dependencies and dev tooling
+node_modules/
+.vite/
+
+# Source files (already compiled into dist/)
+src/
+public/
+
+# Secrets — NEVER include these in the Docker image
+service-account-key.json
+*.json.key
+.env
+.env.*
+*.env
+multi-agent-traffic-sim-2026-*.json
+
+# Vite/Dev config (not needed at runtime)
+vite.config.js
+*.config.js
+
+# Test/scratch files
+*.mjs
+approve-all.js
+fix_nav.cjs
+auth-firestore-test.mjs
+firestore-sdk-test.mjs
+test-firestore.js
+verify-apikey.mjs
+api_key.js
+
+# Firebase config (deployment, not runtime)
+.firebase/
+.firebaserc
+firebase.json
+firestore.rules
+
+# Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store

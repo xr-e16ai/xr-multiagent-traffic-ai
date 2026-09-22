@@ -53,14 +53,17 @@ function backendPlugin() {
 import { loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
-  // Load environment variables from .env files in the project root directory
-  const env = loadEnv(mode, resolve(__dirname, '..'), '');
+  // Load environment variables from .env files in the project root (traffic-sim/)
+  const env = loadEnv(mode, resolve(__dirname, '.'), '');
   
   // Expose loaded environment variables on process.env so send-email.js can access them
   process.env.GMAIL_CLIENT_ID = env.GMAIL_CLIENT_ID || process.env.GMAIL_CLIENT_ID;
   process.env.GMAIL_CLIENT_SECRET = env.GMAIL_CLIENT_SECRET || process.env.GMAIL_CLIENT_SECRET;
   process.env.GMAIL_REFRESH_TOKEN = env.GMAIL_REFRESH_TOKEN || process.env.GMAIL_REFRESH_TOKEN;
   process.env.GMAIL_SENDER_EMAIL = env.GMAIL_SENDER_EMAIL || process.env.GMAIL_SENDER_EMAIL;
+
+  // Map the Cloud Run/Secret Manager GEMINI_API_KEY to Vite's VITE_ prefix so it gets injected into the frontend build
+  process.env.VITE_GEMINI_API_KEY = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
 
   return {
     plugins: [backendPlugin()],

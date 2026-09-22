@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx vite --force",
     "build": "npx vite build",
-    "preview": "npx vite preview"
+    "preview": "npx vite preview",
+    "start": "node server.js"
   },
   "devDependencies": {
     "vite": "^7.2.4"

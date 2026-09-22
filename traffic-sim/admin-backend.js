@@ -1,6 +1,6 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
@@ -9,16 +9,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Initialize Firebase Admin SDK
+// - Local dev:   uses service-account-key.json if present
+// - Cloud Run:   uses Application Default Credentials (attached service account)
 let db;
 try {
-  const serviceAccountPath = resolve(__dirname, 'service-account-key.json');
-  const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-
   if (!getApps().length) {
-    initializeApp({
-      credential: cert(serviceAccount)
-    });
-    console.log('[Admin SDK] Initialized successfully');
+    const keyPath = resolve(__dirname, 'service-account-key.json');
+    if (existsSync(keyPath)) {
+      // Local development — use explicit key file
+      const serviceAccount = JSON.parse(readFileSync(keyPath, 'utf8'));
+      initializeApp({ credential: cert(serviceAccount) });
+      console.log('[Admin SDK] Initialized with local service-account-key.json');
+    } else {
+      // Cloud Run / GCP — use Application Default Credentials
+      initializeApp();
+      console.log('[Admin SDK] Initialized with Application Default Credentials');
+    }
   }
   db = getFirestore();
 } catch (error) {

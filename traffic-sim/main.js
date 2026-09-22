@@ -2,8 +2,10 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Simulation } from './src/simulation.js';
-import { GEMINI_API_KEY } from './api_key.js';
 import { db } from './src/firebase-config.js';
+
+// The API key is injected at build time by Vite from the VITE_GEMINI_API_KEY environment variable.
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 import { doc, getDoc } from "firebase/firestore";
 
 class App {
