@@ -75,6 +75,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
+          instruction: resolve(__dirname, 'instruction.html'),
           login: resolve(__dirname, 'login.html'),
           dashboard: resolve(__dirname, 'dashboard.html'),
           adminLogin: resolve(__dirname, 'admin-login.html'),
