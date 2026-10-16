@@ -14,7 +14,7 @@
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <div class="logo-icon">💠</div>
+          <img src="/assets/e16%20ai%20.png" alt="E16 AI Company Logo" class="brand-logo-img" />
         </div>
         <div class="brand-text">
           <h2 class="company-name">E16 AI XR Tech</h2>
@@ -78,21 +78,11 @@
             <h1 class="page-title">Organization Details</h1>
           </div>
         </div>
-        <div class="header-center">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search resources, docs, users...">
-            <span class="search-shortcut">Ctrl+K</span>
-          </div>
-        </div>
         <div class="header-right">
           <div class="datetime-display">
             <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
           </div>
-          <div class="header-icon-btn notification-bell">
-            🔔 <span class="badge">3</span>
-          </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profile-dropdown-trigger">
             <div class="avatar">A</div>
             <div class="profile-info">
               <span class="profile-name">Administrator</span>
@@ -100,93 +90,130 @@
             </div>
             <span class="dropdown-icon">▼</span>
           </div>
+          <!-- Profile Dropdown Menu -->
+          <div class="profile-menu" id="profile-menu" style="display:none;">
+            <div class="profile-menu-header">
+              <div class="avatar" style="width:44px;height:44px;font-size:1.1rem;">A</div>
+              <div>
+                <div class="profile-menu-name">Administrator</div>
+                <div class="profile-menu-role">Super Admin</div>
+              </div>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <a href="/admin-settings.html" class="profile-menu-item">⚙️ Settings</a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item danger" id="profile-menu-logout">🚪 Logout</a>
+          </div>
         </div>
       </header>
 
       <!-- SCROLLABLE CONTENT -->
       <main class="app-content">
         
-        <!-- ORG HEADER SUMMARY -->
-        <div class="glass-panel fade-in" style="padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden;">
-          <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%;"></div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-            <div>
-              <p style="color: var(--color-primary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0;">Organization Profile</p>
-              <h2 id="detail-org-name" style="margin: 0; font-size: 2rem; color: #fff;">Loading...</h2>
-            </div>
+        <!-- ERROR STATE (HIDDEN BY DEFAULT) -->
+        <div id="org-not-found-card" class="glass-panel fade-in" style="display: none; padding: 48px; text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 3rem; margin-bottom: 12px;">🏢</div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 8px; color: #fff;">Organization Not Found</h2>
+          <p id="org-not-found-msg" style="color: var(--text-muted); max-width: 500px; margin: 0 auto 24px;">No valid organization name or ID was specified in the URL request.</p>
+          <a href="/admin-organizations.html" class="action-btn glass-panel primary-action" style="display: inline-block; padding: 10px 24px; text-decoration: none;">← Back to Organizations</a>
+        </div>
+
+        <!-- ORG MAIN CONTENT WRAPPER -->
+        <div id="org-content-wrapper">
+          <!-- ORG HEADER SUMMARY -->
+          <div class="glass-panel fade-in" style="padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%;"></div>
             
-            <div style="display: flex; gap: 24px; background: rgba(0,0,0,0.2); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
               <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Total Users</div>
-                <div id="detail-total-users" style="font-size: 1.5rem; font-weight: 600; color: #fff;">-</div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                  <p style="color: var(--color-primary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0;">Organization Profile</p>
+                  <span id="detail-license-overview" class="status-badge" style="font-size: 0.75rem; display: none;"></span>
+                </div>
+                <h2 id="detail-org-name" style="margin: 0; font-size: 2rem; color: #fff; word-break: break-word;">Loading...</h2>
+                <p id="detail-org-meta" style="color: var(--text-muted); font-size: 0.85rem; margin: 8px 0 0 0;">Platform Member Organization</p>
               </div>
-              <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
-              <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Activated</div>
-                <div id="detail-activated-users" style="font-size: 1.5rem; font-weight: 600; color: var(--color-success);"> - </div>
-              </div>
-              <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
-              <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Pending</div>
-                <div id="detail-pending-users" style="font-size: 1.5rem; font-weight: 600; color: var(--color-warning);"> - </div>
+              
+              <div style="display: flex; gap: 20px; background: rgba(0,0,0,0.3); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">Total Users</div>
+                  <div id="detail-total-users" style="font-size: 1.4rem; font-weight: 700; color: #fff;">-</div>
+                </div>
+                <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--color-success); margin-bottom: 4px; text-transform: uppercase;">Activated</div>
+                  <div id="detail-activated-users" style="font-size: 1.4rem; font-weight: 700; color: var(--color-success);">-</div>
+                </div>
+                <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--color-warning); margin-bottom: 4px; text-transform: uppercase;">Pending</div>
+                  <div id="detail-pending-users" style="font-size: 1.4rem; font-weight: 700; color: var(--color-warning);">-</div>
+                </div>
+                <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--color-danger); margin-bottom: 4px; text-transform: uppercase;">Deactivated</div>
+                  <div id="detail-deactivated-users" style="font-size: 1.4rem; font-weight: 700; color: var(--color-danger);">-</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="page-header flex-between fade-in" style="animation-delay: 0.1s;">
-          <div>
-            <h3 class="section-title" style="margin: 0; font-size: 1.25rem;">Organization Members</h3>
-            <p style="color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.9rem;">Read-only view of users belonging to this organization.</p>
+          <div class="page-header flex-between fade-in" style="animation-delay: 0.1s;">
+            <div>
+              <h3 class="section-title" style="margin: 0; font-size: 1.25rem;">Associated Organization Users</h3>
+              <p style="color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.9rem;">Verified user accounts and license allocation under this organization.</p>
+            </div>
           </div>
-        </div>
 
-        <!-- FILTER BAR -->
-        <div class="filter-bar glass-panel fade-in" style="animation-delay: 0.15s; display: flex; gap: 16px;">
-          <div class="filter-search" style="flex: 1;">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="user-search-input" placeholder="Search Members by Name, Phone, Email...">
+          <!-- FILTER BAR -->
+          <div class="filter-bar glass-panel fade-in" style="animation-delay: 0.15s; display: flex; gap: 16px; margin-bottom: 20px;">
+            <div class="filter-search" style="flex: 1;">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="user-search-input" placeholder="Search by Name, Email, or Phone...">
+            </div>
+            <div class="filter-options">
+              <select id="user-status-filter" class="glass-select">
+                <option value="all">License Status: All</option>
+                <option value="Activated">License: Activated</option>
+                <option value="Pending">License: Pending</option>
+                <option value="Deactivated">License: Deactivated</option>
+                <option value="Deleted">License: Deleted</option>
+              </select>
+            </div>
           </div>
-          <div class="filter-options">
-            <select id="user-status-filter" class="glass-select">
-              <option value="all">Status: All</option>
-              <option value="pending">Status: Pending</option>
-              <option value="activated">Status: Activated</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- DATA TABLE -->
-        <div class="table-container glass-panel fade-in" style="animation-delay: 0.2s;">
-          <table class="data-table" id="users-table">
-            <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Registration Date</th>
-                <th>Last Login</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="users-table-body">
-              <!-- Skeletons while loading -->
-              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
-              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
-              <tr class="skeleton-row"><td colspan="6"><div class="skeleton-bar"></div></td></tr>
-            </tbody>
-          </table>
-          
-          <!-- PAGINATION -->
-          <div class="pagination-container">
-            <div class="pagination-info" id="pagination-info">Showing 0 to 0 of 0 entries</div>
-            <div class="pagination-controls">
-              <button class="page-btn glass-panel" id="prev-page" disabled>Previous</button>
-              <div class="page-numbers" id="page-numbers">
-                <button class="page-btn active">1</button>
+          <!-- DATA TABLE -->
+          <div class="table-container glass-panel fade-in" style="animation-delay: 0.2s;">
+            <table class="data-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Registration Date</th>
+                  <th>Last Login</th>
+                  <th>License Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <!-- Skeletons while loading -->
+                <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+                <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+                <tr class="skeleton-row"><td colspan="7"><div class="skeleton-bar"></div></td></tr>
+              </tbody>
+            </table>
+            
+            <!-- PAGINATION -->
+            <div class="pagination-container">
+              <div class="pagination-info" id="pagination-info">Showing 0 to 0 of 0 entries</div>
+              <div class="pagination-controls">
+                <button class="page-btn glass-panel" id="prev-page" disabled>Previous</button>
+                <div class="page-numbers" id="page-numbers">
+                  <button class="page-btn active">1</button>
+                </div>
+                <button class="page-btn glass-panel" id="next-page" disabled>Next</button>
               </div>
-              <button class="page-btn glass-panel" id="next-page" disabled>Next</button>
             </div>
           </div>
         </div>
@@ -205,6 +232,34 @@
     }
     setInterval(updateDateTime, 1000);
     updateDateTime();
+
+    // Profile dropdown toggle
+    (function() {
+      const trigger = document.getElementById('profile-dropdown-trigger');
+      const menu = document.getElementById('profile-menu');
+      if (!trigger || !menu) return;
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = menu.style.display === 'block';
+        menu.style.display = isOpen ? 'none' : 'block';
+      });
+      document.addEventListener('click', function() {
+        menu.style.display = 'none';
+      });
+      menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      const logoutItem = document.getElementById('profile-menu-logout');
+      if (logoutItem) {
+        logoutItem.addEventListener('click', function(e) {
+          e.preventDefault();
+          sessionStorage.removeItem('adminLoggedIn');
+          sessionStorage.removeItem('adminToken');
+          sessionStorage.removeItem('adminName');
+          window.location.href = '/admin-login.html';
+        });
+      }
+    })();
   </script>
 </body>
 </html>

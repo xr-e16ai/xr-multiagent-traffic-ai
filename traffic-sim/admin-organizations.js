@@ -70,15 +70,24 @@ async function loadOrgs() {
       const orgName = u.organizationName ? u.organizationName.trim() : 'Independent / No Organization';
       
       if (!orgMap[orgName]) {
-        orgMap[orgName] = { name: orgName, total: 0, activated: 0, pending: 0, lastRegistration: 0 };
+        orgMap[orgName] = { name: orgName, total: 0, activated: 0, pending: 0, deactivated: 0, lastRegistration: 0 };
       }
       
       orgMap[orgName].total++;
-      if (u.isApproved) {
-        orgMap[orgName].activated++;
-      } else {
-        orgMap[orgName].pending++;
+      
+      // Determine license status according to platform schema
+      let lic = 'Pending';
+      if (u.licenseStatus) {
+        lic = u.licenseStatus;
+      } else if (u.isApproved === true) {
+        lic = (u.subscriptionStatus === 'inactive' || u.simulationAccess === false) ? 'Deactivated' : 'Activated';
+      } else if (u.subscriptionStatus === 'inactive' || (u.isApproved === false && u.approvedAt)) {
+        lic = 'Deactivated';
       }
+
+      if (lic === 'Activated') orgMap[orgName].activated++;
+      else if (lic === 'Deactivated') orgMap[orgName].deactivated++;
+      else orgMap[orgName].pending++;
 
       if (u.createdAt) {
         const t = new Date(u.createdAt).getTime();
@@ -192,9 +201,10 @@ function renderGrid() {
         <span class="badge" style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${o.total} Users</span>
       </div>
       
-      <div style="display: flex; gap: 8px; align-items: center;">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
         <span class="status-badge activated" style="font-size: 0.75rem;">${o.activated} Activated</span>
         <span class="status-badge pending" style="font-size: 0.75rem;">${o.pending} Pending</span>
+        ${o.deactivated > 0 ? `<span class="status-badge deactivated" style="font-size: 0.75rem;">${o.deactivated} Deactivated</span>` : ''}
       </div>
 
       <div style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">

@@ -14,7 +14,7 @@
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <div class="logo-icon">💠</div>
+          <img src="/assets/e16%20ai%20.png" alt="E16 AI Company Logo" class="brand-logo-img" />
         </div>
         <div class="brand-text">
           <h2 class="company-name">E16 AI XR Tech</h2>
@@ -75,27 +75,31 @@
         <div class="header-left">
           <h1 class="page-title">User Management</h1>
         </div>
-        <div class="header-center">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search resources, docs, users...">
-            <span class="search-shortcut">Ctrl+K</span>
-          </div>
-        </div>
         <div class="header-right">
           <div class="datetime-display">
             <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
           </div>
-          <div class="header-icon-btn notification-bell">
-            🔔 <span class="badge">3</span>
-          </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profile-dropdown-trigger">
             <div class="avatar">A</div>
             <div class="profile-info">
               <span class="profile-name">Administrator</span>
               <span class="profile-role">Super Admin</span>
             </div>
             <span class="dropdown-icon">▼</span>
+          </div>
+          <!-- Profile Dropdown Menu -->
+          <div class="profile-menu" id="profile-menu" style="display:none;">
+            <div class="profile-menu-header">
+              <div class="avatar" style="width:44px;height:44px;font-size:1.1rem;">A</div>
+              <div>
+                <div class="profile-menu-name">Administrator</div>
+                <div class="profile-menu-role">Super Admin</div>
+              </div>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <a href="/admin-settings.html" class="profile-menu-item">⚙️ Settings</a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item danger" id="profile-menu-logout">🚪 Logout</a>
           </div>
         </div>
       </header>
@@ -107,11 +111,6 @@
           <div>
             <h2 class="section-title" style="margin: 0; font-size: 1.5rem;">Enterprise Users</h2>
             <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 0.95rem;">Manage user registrations, approvals, and subscriptions.</p>
-          </div>
-          <div>
-            <button class="action-btn glass-panel primary-action" style="padding: 10px 20px; font-size: 0.9rem;">
-              + Add User
-            </button>
           </div>
         </div>
 
@@ -174,6 +173,43 @@
   </div>
 
   <script type="module" src="/admin-users.js"></script>
+
+  <script>
+    (function() {
+      // Date/Time
+      function updateDateTime() {
+        const now = new Date();
+        const dateEl = document.getElementById('current-date');
+        const timeEl = document.getElementById('current-time');
+        if (dateEl) dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+      }
+      setInterval(updateDateTime, 1000);
+      updateDateTime();
+
+      // Profile dropdown toggle
+      const trigger = document.getElementById('profile-dropdown-trigger');
+      const menu = document.getElementById('profile-menu');
+      if (trigger && menu) {
+        trigger.addEventListener('click', function(e) {
+          e.stopPropagation();
+          menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', function() { menu.style.display = 'none'; });
+        menu.addEventListener('click', function(e) { e.stopPropagation(); });
+        const logoutItem = document.getElementById('profile-menu-logout');
+        if (logoutItem) {
+          logoutItem.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminName');
+            window.location.href = '/admin-login.html';
+          });
+        }
+      }
+    })();
+  </script>
 
   <!-- TOAST NOTIFICATIONS -->
   <div id="admin-toast" class="admin-toast" role="alert" aria-live="polite"></div>

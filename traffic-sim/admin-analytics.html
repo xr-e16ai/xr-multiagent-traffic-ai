@@ -15,7 +15,7 @@
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <div class="logo-icon">💠</div>
+          <img src="/assets/e16%20ai%20.png" alt="E16 AI Company Logo" class="brand-logo-img" />
         </div>
         <div class="brand-text">
           <h2 class="company-name">E16 AI XR Tech</h2>
@@ -76,27 +76,30 @@
         <div class="header-left">
           <h1 class="page-title">Enterprise Analytics Dashboard</h1>
         </div>
-        <div class="header-center">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search resources, docs, users...">
-            <span class="search-shortcut">Ctrl+K</span>
-          </div>
-        </div>
         <div class="header-right">
           <div class="datetime-display">
             <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
           </div>
-          <div class="header-icon-btn notification-bell">
-            🔔 <span class="badge">3</span>
-          </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profile-dropdown-trigger">
             <div class="avatar">A</div>
             <div class="profile-info">
               <span class="profile-name">Administrator</span>
               <span class="profile-role">Super Admin</span>
             </div>
             <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="profile-menu" id="profile-menu" style="display:none;">
+            <div class="profile-menu-header">
+              <div class="avatar" style="width:44px;height:44px;font-size:1.1rem;">A</div>
+              <div>
+                <div class="profile-menu-name">Administrator</div>
+                <div class="profile-menu-role">Super Admin</div>
+              </div>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <a href="/admin-settings.html" class="profile-menu-item">⚙️ Settings</a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item danger" id="profile-menu-logout">🚪 Logout</a>
           </div>
         </div>
       </header>
@@ -300,6 +303,29 @@
     }
     setInterval(updateDateTime, 1000);
     updateDateTime();
+
+    // Profile dropdown toggle
+    (function() {
+      const trigger = document.getElementById('profile-dropdown-trigger');
+      const menu = document.getElementById('profile-menu');
+      if (!trigger || !menu) return;
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      });
+      document.addEventListener('click', function() { menu.style.display = 'none'; });
+      menu.addEventListener('click', function(e) { e.stopPropagation(); });
+      const logoutItem = document.getElementById('profile-menu-logout');
+      if (logoutItem) {
+        logoutItem.addEventListener('click', function(e) {
+          e.preventDefault();
+          sessionStorage.removeItem('adminLoggedIn');
+          sessionStorage.removeItem('adminToken');
+          sessionStorage.removeItem('adminName');
+          window.location.href = '/admin-login.html';
+        });
+      }
+    })();
   </script>
 </body>
 </html>

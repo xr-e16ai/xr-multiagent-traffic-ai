@@ -162,7 +162,7 @@
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <div class="logo-icon">💠</div>
+          <img src="/assets/e16%20ai%20.png" alt="E16 AI Company Logo" class="brand-logo-img" />
         </div>
         <div class="brand-text">
           <h2 class="company-name">E16 AI XR Tech</h2>
@@ -223,27 +223,31 @@
         <div class="header-left">
           <h1 class="page-title">System Settings</h1>
         </div>
-        <div class="header-center">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search settings, parameters, logs...">
-            <span class="search-shortcut">Ctrl+K</span>
-          </div>
-        </div>
         <div class="header-right">
           <div class="datetime-display">
             <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
           </div>
-          <div class="header-icon-btn notification-bell">
-            🔔 <span class="badge">3</span>
-          </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profile-dropdown-trigger">
             <div class="avatar">A</div>
             <div class="profile-info">
               <span class="profile-name">Administrator</span>
               <span class="profile-role">Super Admin</span>
             </div>
             <span class="dropdown-icon">▼</span>
+          </div>
+          <!-- Profile Dropdown Menu -->
+          <div class="profile-menu" id="profile-menu" style="display:none;">
+            <div class="profile-menu-header">
+              <div class="avatar" style="width:44px;height:44px;font-size:1.1rem;">A</div>
+              <div>
+                <div class="profile-menu-name">Administrator</div>
+                <div class="profile-menu-role">Super Admin</div>
+              </div>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <a href="/admin-settings.html" class="profile-menu-item">⚙️ Settings</a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item danger" id="profile-menu-logout">🚪 Logout</a>
           </div>
         </div>
       </header>
@@ -538,99 +542,195 @@
               </div>
             </section>
 
-            <!-- SECTION 5: NOTIFICATION SETTINGS -->
-            <section class="section-container fade-in" style="margin-bottom: 0;">
-              <div class="glass-panel" style="padding: 24px;">
-                <h3 class="section-title" style="margin-bottom: 20px;">🔔 Notification Settings</h3>
-                
-                <div style="display: flex; flex-direction: column; gap: 4px;">
 
-                  <div class="setting-row">
-                    <div class="setting-label-group">
-                      <span class="setting-label">Email Notifications</span>
-                      <span class="setting-desc">Send billing, activation, and report digests via email</span>
-                    </div>
-                    <label class="switch">
-                      <input type="checkbox" checked id="email-notif-toggle">
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-
-                  <div class="setting-row">
-                    <div class="setting-label-group">
-                      <span class="setting-label">System Alerts</span>
-                      <span class="setting-desc">Display operational dashboard warnings and messages</span>
-                    </div>
-                    <label class="switch">
-                      <input type="checkbox" checked id="system-alerts-toggle">
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-
-                  <div class="setting-row">
-                    <div class="setting-label-group">
-                      <span class="setting-label">Administrator Alerts</span>
-                      <span class="setting-desc">Notify Super Admins of high latency or resource spike</span>
-                    </div>
-                    <label class="switch">
-                      <input type="checkbox" id="admin-alerts-toggle">
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             <!-- SECTION 6: SECURITY SETTINGS -->
             <section class="section-container fade-in" style="margin-bottom: 0;">
               <div class="glass-panel" style="padding: 24px;">
-                <h3 class="section-title" style="margin-bottom: 20px;">🛡️ Security Settings</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                  <h3 class="section-title" style="margin: 0;">🛡️ Security Settings</h3>
+                  <div>
+                    <button class="action-btn glass-panel" id="security-edit-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px;">Edit</button>
+                    <button class="action-btn glass-panel primary-action" id="security-save-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: none;">Save</button>
+                    <button class="action-btn glass-panel" id="security-cancel-btn" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: none;">Cancel</button>
+                  </div>
+                </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div id="security-section-body" style="display: flex; flex-direction: column; gap: 4px;">
+                  <!-- 1. Session Timeout (mins) -->
                   <div class="setting-row">
                     <div class="setting-label-group">
-                      <span class="setting-label">Session Timeout</span>
-                      <span class="setting-desc">Automatic idle user session logout limit</span>
+                      <span class="setting-label">Session Timeout (mins)</span>
+                      <span class="setting-desc">Automatic idle session logout limit in minutes</span>
                     </div>
-                    <span class="setting-value">60 minutes</span>
+                    <span class="setting-value setting-display" id="sec-timeout-val">60 minutes</span>
+                    <div class="setting-edit-container">
+                      <input type="number" min="5" max="1440" step="5" class="setting-input" id="sec-timeout-input" value="60">
+                    </div>
                   </div>
 
+                  <!-- 2. Max Login Attempts -->
                   <div class="setting-row">
                     <div class="setting-label-group">
-                      <span class="setting-label">Password Policy</span>
-                      <span class="setting-desc">Minimum character safety requirements</span>
+                      <span class="setting-label">Max Login Attempts</span>
+                      <span class="setting-desc">Max failed attempts before temporary account lockout</span>
                     </div>
-                    <span class="setting-value" style="font-size: 0.8rem;">Min 8 chars, 1 uppercase, 1 symbol</span>
+                    <span class="setting-value setting-display" id="sec-attempts-val">5 attempts</span>
+                    <div class="setting-edit-container">
+                      <input type="number" min="1" max="20" step="1" class="setting-input" id="sec-attempts-input" value="5">
+                    </div>
                   </div>
 
+                  <!-- 3. Password Expiry (days) -->
                   <div class="setting-row">
                     <div class="setting-label-group">
-                      <span class="setting-label">Last Backup</span>
-                      <span class="setting-desc">Scheduled Firestore database snapshot backup</span>
+                      <span class="setting-label">Password Expiry (days)</span>
+                      <span class="setting-desc">Days before password change is required (0 for never)</span>
                     </div>
-                    <span class="setting-value">Daily at 02:00 AM UTC</span>
+                    <span class="setting-value setting-display" id="sec-expiry-val">90 days</span>
+                    <div class="setting-edit-container">
+                      <input type="number" min="0" max="365" step="1" class="setting-input" id="sec-expiry-input" value="90">
+                    </div>
                   </div>
 
+                  <!-- 4. Two-Factor Authentication (2FA) -->
                   <div class="setting-row">
                     <div class="setting-label-group">
-                      <span class="setting-label">Login Attempts</span>
-                      <span class="setting-desc">Limit before account temporary suspension</span>
+                      <span class="setting-label">Two-Factor Authentication (2FA)</span>
+                      <span class="setting-desc">Require 2FA authentication for enterprise administrators</span>
                     </div>
-                    <span class="setting-value">5 attempts max</span>
+                    <span class="setting-value setting-display" id="sec-2fa-val">Enabled</span>
+                    <div class="setting-edit-container">
+                      <select class="setting-input" id="sec-2fa-input">
+                        <option value="true" selected>Enabled</option>
+                        <option value="false">Disabled</option>
+                      </select>
+                    </div>
                   </div>
 
+                  <!-- 5. IP Whitelist -->
                   <div class="setting-row">
                     <div class="setting-label-group">
-                      <span class="setting-label">Account Lockout</span>
-                      <span class="setting-desc">Lockout duration after exceeded attempts</span>
+                      <span class="setting-label">IP Whitelist</span>
+                      <span class="setting-desc">Comma-separated allowed IP addresses (empty allows all)</span>
                     </div>
-                    <span class="setting-value">15 minutes lock</span>
+                    <span class="setting-value setting-display" id="sec-ip-val">127.0.0.1, 192.168.1.0/24</span>
+                    <div class="setting-edit-container">
+                      <input type="text" class="setting-input" id="sec-ip-input" value="127.0.0.1, 192.168.1.0/24" placeholder="e.g. 127.0.0.1, 192.168.1.0/24 (leave blank for all)">
+                    </div>
+                  </div>
+
+                  <!-- 6. Require Special Characters -->
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Require Special Characters</span>
+                      <span class="setting-desc">Enforce at least one special symbol in user passwords</span>
+                    </div>
+                    <span class="setting-value setting-display" id="sec-specialchars-val">Enabled</span>
+                    <div class="setting-edit-container">
+                      <select class="setting-input" id="sec-specialchars-input">
+                        <option value="true" selected>Enabled</option>
+                        <option value="false">Disabled</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Account Lockout Duration -->
+                  <div class="setting-row">
+                    <div class="setting-label-group">
+                      <span class="setting-label">Account Lockout Duration (mins)</span>
+                      <span class="setting-desc">Lockout duration in minutes after failed attempts</span>
+                    </div>
+                    <span class="setting-value setting-display" id="sec-lockout-val">15 minutes</span>
+                    <div class="setting-edit-container">
+                      <input type="number" min="1" max="1440" step="1" class="setting-input" id="sec-lockout-input" value="15">
+                    </div>
                   </div>
                 </div>
               </div>
             </section>
 
-            <!-- SECTION 7: SYSTEM HEALTH -->
+            <!-- SECTION 7: DATABASE BACKUP & RETENTION -->
+            <section class="section-container fade-in" style="margin-bottom: 0;">
+              <div class="glass-panel" style="padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                  <div>
+                    <h3 class="section-title" style="margin: 0;">💾 Daily Automated Backup & Retention</h3>
+                    <p style="color: var(--text-muted); font-size: 0.82rem; margin: 4px 0 0 0;">Automatic daily disaster recovery backup • Strict 3-backup retention policy</p>
+                  </div>
+                  <div style="display: flex; gap: 10px;">
+                    <button class="action-btn glass-panel primary-action" id="btn-manual-backup" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 6px;">
+                      <span>▶</span> Run Backup Now
+                    </button>
+                    <button class="action-btn glass-panel" id="btn-refresh-backup-status" style="padding: 8px 12px; font-size: 0.85rem; border-radius: 6px;" title="Refresh status">
+                      🔄
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Backup Metrics Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                  <div class="glass-panel" style="padding: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Automatic Schedule</div>
+                    <div style="font-size: 1.05rem; font-weight: 600; color: #fff;" id="backup-schedule-display">Daily at 02:00 UTC</div>
+                    <div style="font-size: 0.72rem; color: var(--color-success); margin-top: 4px;" id="backup-auto-status">● Enabled</div>
+                  </div>
+                  <div class="glass-panel" style="padding: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Retention Policy</div>
+                    <div style="font-size: 1.05rem; font-weight: 600; color: #60a5fa;" id="backup-retention-display">Latest 3 Backups</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Older sets auto-purged</div>
+                  </div>
+                  <div class="glass-panel" style="padding: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Last Successful Backup</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: #fff;" id="backup-last-time">Checking...</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;" id="backup-last-meta">—</div>
+                  </div>
+                  <div class="glass-panel" style="padding: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Next Scheduled Run</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: #cbd5e1;" id="backup-next-time">Calculating...</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Cloud Scheduler / Server Cron</div>
+                  </div>
+                </div>
+
+                <!-- Storage Details & Policy Notice -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.82rem; color: var(--text-muted);">
+                  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+                    <span><strong>Destination Bucket:</strong> <code style="color: #60a5fa;" id="backup-dest-bucket">gs://multi-agent-traffic-sim-2026-backups/backups/</code></span>
+                    <span><strong>Security:</strong> Private Bucket • Sanitized Payload (No secrets/passwords)</span>
+                  </div>
+                  <div><strong>Retention Invariant:</strong> Valid backups are never purged prior to new verified backup success. Only the 3 most recent backups are retained.</div>
+                </div>
+
+                <!-- Backup History Table -->
+                <div style="margin-top: 16px;">
+                  <div style="font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                    <span>Recent Backup Log & Retention Status</span>
+                    <span style="font-size: 0.75rem; color: var(--text-dark);" id="backup-history-count">0 recorded</span>
+                  </div>
+                  <div style="overflow-x: auto;">
+                    <table class="data-table" style="font-size: 0.82rem;">
+                      <thead>
+                        <tr>
+                          <th>Backup Identifier</th>
+                          <th>Timestamp</th>
+                          <th>Status</th>
+                          <th>Size</th>
+                          <th>Records</th>
+                          <th>Retention Status</th>
+                          <th>Initiated By</th>
+                        </tr>
+                      </thead>
+                      <tbody id="backup-history-table-body">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading backup history...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- SECTION 8: SYSTEM HEALTH -->
             <section class="section-container fade-in" style="margin-bottom: 0;">
               <div class="glass-panel" style="padding: 24px;">
                 <h3 class="section-title" style="margin-bottom: 20px;">💚 System Health</h3>

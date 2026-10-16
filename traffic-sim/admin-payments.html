@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${title} - Enterprise Command Center</title>
+  <title>Payments - Enterprise Command Center</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin.css">
 </head>
@@ -14,7 +14,7 @@
     <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <div class="logo-icon">💠</div>
+          <img src="/assets/e16%20ai%20.png" alt="E16 AI Company Logo" class="brand-logo-img" />
         </div>
         <div class="brand-text">
           <h2 class="company-name">E16 AI XR Tech</h2>
@@ -23,7 +23,41 @@
       </div>
       <div class="sidebar-divider"></div>
       
-${generateNav(activeId)}
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <a href="/admin-dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Command Center</span>
+        </a>
+        <a href="/admin-users.html" class="nav-link">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="/admin-organizations.html" class="nav-link">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Organizations</span>
+        </a>
+        <a href="/admin-analytics.html" class="nav-link">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/admin-payments.html" class="nav-link active">
+          <span class="nav-icon">💳</span>
+          <span class="nav-label">Payments</span>
+        </a>
+        <a href="/admin-reports.html" class="nav-link">
+          <span class="nav-icon">📑</span>
+          <span class="nav-label">Reports</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        <div class="nav-section-title">PREFERENCES</div>
+        
+        <a href="/admin-settings.html" class="nav-link">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
       
       <div class="sidebar-footer">
         <a href="#" class="nav-link logout" id="admin-logout-btn">
@@ -39,23 +73,13 @@ ${generateNav(activeId)}
       <!-- TOP HEADER -->
       <header class="app-header">
         <div class="header-left">
-          <h1 class="page-title">${title}</h1>
-        </div>
-        <div class="header-center">
-          <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search resources, docs, users...">
-            <span class="search-shortcut">Ctrl+K</span>
-          </div>
+          <h1 class="page-title">Payments</h1>
         </div>
         <div class="header-right">
           <div class="datetime-display">
             <span id="current-date"></span> <span class="time-sep">•</span> <span id="current-time"></span>
           </div>
-          <div class="header-icon-btn notification-bell">
-            🔔 <span class="badge">3</span>
-          </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profile-dropdown-trigger">
             <div class="avatar">A</div>
             <div class="profile-info">
               <span class="profile-name">Administrator</span>
@@ -63,13 +87,27 @@ ${generateNav(activeId)}
             </div>
             <span class="dropdown-icon">▼</span>
           </div>
+          <!-- Profile Dropdown Menu -->
+          <div class="profile-menu" id="profile-menu" style="display:none;">
+            <div class="profile-menu-header">
+              <div class="avatar" style="width:44px;height:44px;font-size:1.1rem;">A</div>
+              <div>
+                <div class="profile-menu-name">Administrator</div>
+                <div class="profile-menu-role">Super Admin</div>
+              </div>
+            </div>
+            <div class="profile-menu-divider"></div>
+            <a href="/admin-settings.html" class="profile-menu-item">⚙️ Settings</a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item danger" id="profile-menu-logout">🚪 Logout</a>
+          </div>
         </div>
       </header>
 
       <!-- SCROLLABLE CONTENT -->
       <main class="app-content" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 80px);">
         <div class="glass-panel" style="padding: 60px; text-align: center; max-width: 500px;">
-          <h2 style="font-size: 2rem; margin-bottom: 16px; color: #fff;">${title}</h2>
+          <h2 style="font-size: 2rem; margin-bottom: 16px; color: #fff;">Payments</h2>
           <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">This module is currently under development. Enterprise access will be enabled in the upcoming release.</p>
           <button class="action-btn glass-panel primary-action" style="margin-top: 32px; padding: 12px 32px;" onclick="window.location.href='/admin-dashboard.html'">Return to Dashboard</button>
         </div>
@@ -77,6 +115,44 @@ ${generateNav(activeId)}
     </div>
   </div>
 
-  <script type="module" src="/admin-dashboard.js"></script>
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const d = document.getElementById('current-date');
+      const t = document.getElementById('current-time');
+      if (d) d.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      if (t) t.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // Profile dropdown toggle
+    (function() {
+      const trigger = document.getElementById('profile-dropdown-trigger');
+      const menu = document.getElementById('profile-menu');
+      if (!trigger || !menu) return;
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = menu.style.display === 'block';
+        menu.style.display = isOpen ? 'none' : 'block';
+      });
+      document.addEventListener('click', function() {
+        menu.style.display = 'none';
+      });
+      menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      const logoutItem = document.getElementById('profile-menu-logout');
+      if (logoutItem) {
+        logoutItem.addEventListener('click', function(e) {
+          e.preventDefault();
+          sessionStorage.removeItem('adminLoggedIn');
+          sessionStorage.removeItem('adminToken');
+          sessionStorage.removeItem('adminName');
+          window.location.href = '/admin-login.html';
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -15,7 +15,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { handleAdminApi, getEmailByPhone } from './admin-backend.js';
+import { handleAdminApi, getEmailByPhone, runBackup } from './admin-backend.js';
 import { sendLoginDetailsEmail } from './send-email.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -126,6 +126,8 @@ const server = http.createServer(async (req, res) => {
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     serveFile(res, filePath);
+  } else if (fs.existsSync(filePath + '.html') && fs.statSync(filePath + '.html').isFile()) {
+    serveFile(res, filePath + '.html');
   } else {
     // For .html requests that don't exist as files, return 404
     // For everything else, fall back to index.html (SPA)
@@ -139,6 +141,25 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`[Server] Serving static files from: ${DIST_DIR}`);
   console.log(`[Server] Admin API: /api/admin/*`);
   console.log(`[Server] Forgot Login: POST /send-forgot-login`);
+
+  // Server-side Automated Daily Backup Scheduler
+  // Independent of any browser session: checks daily at startup and hourly
+  let lastDailyBackup = 0;
+  async function triggerDailyBackupCheck() {
+    // Prevent multiple runs within 18 hours
+    if (Date.now() - lastDailyBackup < 18 * 3600 * 1000) return;
+    try {
+      console.log('[Server Daily Scheduler] Executing daily automatic backup check...');
+      await runBackup('Server Background Daily Cron');
+      lastDailyBackup = Date.now();
+      console.log('[Server Daily Scheduler] Daily automatic backup completed successfully.');
+    } catch (e) {
+      console.warn('[Server Daily Scheduler] Daily backup notice:', e.message);
+    }
+  }
+
+  setTimeout(triggerDailyBackupCheck, 15000); // 15s after startup
+  setInterval(triggerDailyBackupCheck, 3600 * 1000); // Hourly check
 });
 
 server.on('error', (err) => {
